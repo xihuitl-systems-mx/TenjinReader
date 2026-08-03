@@ -1,0 +1,40 @@
+{
+  "name": "folentra-pdf",
+  "private": true,
+  "version": "1.6.1",
+  "type": "module",
+  "description": "Lector y editor PDF ligero con visor de presentaciones para Windows, Linux y macOS.",
+  "homepage": "https://github.com/Xihuitl-Systems/folentra-pdf#readme",
+  "bugs": {
+    "url": "https://github.com/Xihuitl-Systems/folentra-pdf/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xihuitl-Systems/folentra-pdf.git"
+  },
+  "scripts": {
+    "build:icons": "node scripts/make_installer_icon.mjs",
+    "dev": "vite",
+    "build:web": "vite build",
+    "build:app": "npm run build:web && neu build --clean --embed-resources --release",
+    "run:app": "npm run build:web && neu run",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@libpdf/core": "0.4.1",
+    "@neutralinojs/lib": "6.9.0",
+    "chart.js": "4.5.1",
+    "jszip": "3.10.1",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.1.200",
+    "pptxviewjs": "1.1.9"
+  },
+  "devDependencies": {
+    "@neutralinojs/neu": "11.7.2",
+    "png2icons": "2.0.1",
+    "vite": "8.1.5"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

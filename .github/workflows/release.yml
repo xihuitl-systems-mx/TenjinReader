@@ -1,0 +1,367 @@
+name: Compilar instaladores
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "24"
+  SOURCE_DATE_EPOCH: "0"
+
+jobs:
+  validate:
+    name: Validar versión
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+      - name: Comparar etiqueta y package.json
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          version="$(node -p 'require("./package.json").version')"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          if [[ "$GITHUB_REF" == refs/tags/* && "$GITHUB_REF" != "refs/tags/v$version" ]]; then
+            printf 'La etiqueta %s no coincide con package.json (%s).\n' \
+              "$GITHUB_REF_NAME" "$version" >&2
+            exit 1
+          fi
+
+  windows:
+    name: Windows x64
+    needs: validate
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          package-manager-cache: false
+      - name: Probar y compilar
+        shell: pwsh
+        run: |
+          npm ci
+          npx --no-install neu update
+          npm test
+          npm run build:icons
+          npm run build:app
+      - name: Instalar Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress --yes
+      - name: Firmar cuando exista un certificado de organización y crear EXE
+        shell: pwsh
+        env:
+          WINDOWS_PFX_BASE64: ${{ secrets.WINDOWS_PFX_BASE64 }}
+          WINDOWS_PFX_PASSWORD: ${{ secrets.WINDOWS_PFX_PASSWORD }}
+        run: |
+          $version = (Get-Content -Raw package.json | ConvertFrom-Json).version
+          $outputDir = Join-Path $env:GITHUB_WORKSPACE "release-output"
+          New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
+          $setup = Join-Path $outputDir "Folentra-PDF-$version-Setup-x64.exe"
+          $iscc = (Get-Command ISCC.exe -ErrorAction Stop).Source
+          $isReleaseTag = $env:GITHUB_REF -like "refs/tags/v*"
+
+          if ([string]::IsNullOrWhiteSpace($env:WINDOWS_PFX_BASE64)) {
+            if ($isReleaseTag) {
+              throw "Una publicación etiquetada requiere Authenticode válido; falta WINDOWS_PFX_BASE64."
+            }
+            Write-Warning "Se creará un instalador sin Authenticode: no existe WINDOWS_PFX_BASE64."
+            & $iscc "/O$outputDir" installer\PlumaReader.iss
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            exit 0
+          }
+
+          if ([string]::IsNullOrWhiteSpace($env:WINDOWS_PFX_PASSWORD)) {
+            throw "WINDOWS_PFX_PASSWORD está vacío."
+          }
+
+          $pfx = Join-Path $env:RUNNER_TEMP "xihuitl-systems.pfx"
+          try {
+            [IO.File]::WriteAllBytes(
+              $pfx,
+              [Convert]::FromBase64String($env:WINDOWS_PFX_BASE64)
+            )
+            $securePassword = ConvertTo-SecureString `
+              $env:WINDOWS_PFX_PASSWORD -AsPlainText -Force
+            $certificate = Import-PfxCertificate `
+              -FilePath $pfx `
+              -CertStoreLocation Cert:\CurrentUser\My `
+              -Password $securePassword `
+              -Exportable:$false
+          }
+          finally {
+            Remove-Item -LiteralPath $pfx -Force -ErrorAction SilentlyContinue
+            $env:WINDOWS_PFX_BASE64 = $null
+            $env:WINDOWS_PFX_PASSWORD = $null
+          }
+
+          $signTool = Get-ChildItem `
+            "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+          if (-not $signTool) { throw "No se encontró signtool.exe." }
+
+          .\scripts\sign_windows.ps1 `
+            -ApplicationExe .\dist\folentra-pdf\folentra-pdf-win_x64.exe `
+            -SignToolPath $signTool `
+            -CertificateThumbprint $certificate.Thumbprint `
+            -ExpectedPublisher "Xihuitl Systems"
+
+          $signCommand = (
+            '"{0}" sign /fd SHA256 /sha1 {1} /tr http://timestamp.digicert.com /td SHA256 /d $qFolentra PDF$q $f' `
+              -f $signTool, $certificate.Thumbprint
+          )
+          & $iscc "/O$outputDir" "/DSIGN_RELEASE" "/Sxihuitl=$signCommand" installer\PlumaReader.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $signTool verify /pa /all /v $setup
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verificar metadatos del instalador
+        shell: pwsh
+        run: |
+          $version = (Get-Content -Raw package.json | ConvertFrom-Json).version
+          $setup = Resolve-Path "release-output\Folentra-PDF-$version-Setup-x64.exe"
+          $info = (Get-Item $setup).VersionInfo
+          if ($info.CompanyName -ne "Xihuitl Systems") {
+            throw "CompanyName inesperado: $($info.CompanyName)"
+          }
+          if ($info.ProductVersion -ne $version) {
+            throw "ProductVersion inesperado: $($info.ProductVersion)"
+          }
+          $signature = Get-AuthenticodeSignature $setup
+          $signature | Format-List
+          if ($env:GITHUB_REF -like "refs/tags/v*" -and $signature.Status -ne "Valid") {
+            throw "La publicación etiquetada no tiene una firma Authenticode válida."
+          }
+      - uses: actions/upload-artifact@v7
+        with:
+          name: folentra-pdf-windows
+          path: release-output/Folentra-PDF-*-Setup-x64.exe
+          if-no-files-found: error
+          retention-days: 14
+
+  linux:
+    name: Linux AppImage x86_64
+    needs: validate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          package-manager-cache: false
+      - name: Probar y compilar
+        run: |
+          npm ci
+          npx --no-install neu update
+          npm test
+          npm run build:app
+      - name: Descargar appimagetool 1.9.1 y verificar el digest publicado
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          asset="appimagetool-x86_64.AppImage"
+          api="https://api.github.com/repos/AppImage/appimagetool/releases/tags/1.9.1"
+          digest="$(curl --fail --location --silent --show-error "$api" |
+            jq --raw-output --arg name "$asset" \
+              '.assets[] | select(.name == $name) | .digest')"
+          [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]] || {
+            printf 'Digest oficial ausente o inválido: %s\n' "$digest" >&2
+            exit 1
+          }
+          curl --fail --location --silent --show-error \
+            "https://github.com/AppImage/appimagetool/releases/download/1.9.1/$asset" \
+            --output "$RUNNER_TEMP/$asset"
+          printf '%s  %s\n' "${digest#sha256:}" "$RUNNER_TEMP/$asset" |
+            sha256sum --check -
+          chmod 0755 "$RUNNER_TEMP/$asset"
+      - name: Crear y validar AppImage
+        shell: bash
+        env:
+          APPIMAGETOOL: ${{ runner.temp }}/appimagetool-x86_64.AppImage
+          FOLENTRA_OUTPUT_DIR: ${{ github.workspace }}/release-output
+        run: |
+          set -Eeuo pipefail
+          bash scripts/build_appimage.sh
+          image="$(find "$FOLENTRA_OUTPUT_DIR" -maxdepth 1 -name 'Folentra-PDF-*-x86_64.AppImage' -print -quit)"
+          [[ -n "$image" ]]
+          offset="$("$image" --appimage-offset)"
+          [[ "$offset" =~ ^[0-9]+$ ]]
+          extract_dir="$RUNNER_TEMP/folentra-pdf-appimage-check"
+          mkdir -p "$extract_dir"
+          (
+            cd "$extract_dir"
+            "$image" --appimage-extract >/dev/null
+            test -x squashfs-root/AppRun
+            test -x squashfs-root/usr/bin/Folentra-PDF
+          )
+      - uses: actions/upload-artifact@v7
+        with:
+          name: folentra-pdf-linux
+          path: |
+            release-output/Folentra-PDF-*-x86_64.AppImage
+            release-output/Folentra-PDF-*-x86_64.AppImage.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  macos:
+    name: macOS universal
+    needs: validate
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          package-manager-cache: false
+      - name: Probar y compilar
+        run: |
+          npm ci
+          npx --no-install neu update
+          npm test
+          npm run build:app
+      - name: Preparar Developer ID y notarización cuando existan secretos
+        shell: bash
+        env:
+          MACOS_CERTIFICATE_BASE64: ${{ secrets.MACOS_CERTIFICATE_BASE64 }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          MACOS_DEVELOPER_IDENTITY: ${{ secrets.MACOS_DEVELOPER_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -Eeuo pipefail
+          if [[ -z "$MACOS_CERTIFICATE_BASE64" ]]; then
+            if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+              printf 'Una publicación etiquetada requiere Developer ID; falta MACOS_CERTIFICATE_BASE64.\n' >&2
+              exit 1
+            fi
+            printf 'Se creará un DMG sin Developer ID ni notarización.\n' >&2
+            exit 0
+          fi
+          [[ -n "$MACOS_CERTIFICATE_PASSWORD" ]]
+          [[ -n "$MACOS_DEVELOPER_IDENTITY" ]]
+          [[ "$MACOS_DEVELOPER_IDENTITY" == "Developer ID Application:"* ]] || {
+            printf 'MACOS_DEVELOPER_IDENTITY no es una identidad Developer ID Application.\n' >&2
+            exit 1
+          }
+
+          keychain="$RUNNER_TEMP/folentra-pdf.keychain-db"
+          keychain_password="$(openssl rand -hex 24)"
+          certificate="$RUNNER_TEMP/developer-id.p12"
+          trap 'rm -f "$certificate"' EXIT
+          printf '%s' "$MACOS_CERTIFICATE_BASE64" | base64 -D >"$certificate"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security default-keychain -s "$keychain"
+          security import "$certificate" \
+            -k "$keychain" \
+            -P "$MACOS_CERTIFICATE_PASSWORD" \
+            -T /usr/bin/codesign \
+            -T /usr/bin/security
+          rm -f "$certificate"
+          trap - EXIT
+          unset MACOS_CERTIFICATE_BASE64 MACOS_CERTIFICATE_PASSWORD
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -s \
+            -k "$keychain_password" \
+            "$keychain"
+          security find-identity -v -p codesigning "$keychain"
+          printf 'MACOS_SIGN_IDENTITY=%s\n' "$MACOS_DEVELOPER_IDENTITY" >>"$GITHUB_ENV"
+
+          if [[ -n "$APPLE_ID" && -n "$APPLE_APP_PASSWORD" && -n "$APPLE_TEAM_ID" ]]; then
+            xcrun notarytool store-credentials folentra-pdf-notary \
+              --apple-id "$APPLE_ID" \
+              --password "$APPLE_APP_PASSWORD" \
+              --team-id "$APPLE_TEAM_ID"
+            printf 'MACOS_NOTARY_PROFILE=folentra-pdf-notary\n' >>"$GITHUB_ENV"
+          else
+            if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+              printf 'Una publicación etiquetada requiere credenciales completas de notarización.\n' >&2
+              exit 1
+            fi
+            printf 'Faltan credenciales de notarización; solo se firmará el DMG.\n' >&2
+          fi
+      - name: Crear y validar DMG
+        shell: bash
+        env:
+          FOLENTRA_OUTPUT_DIR: ${{ github.workspace }}/release-output
+        run: |
+          set -Eeuo pipefail
+          bash scripts/build_macos_dmg.sh
+          dmg="$(find "$FOLENTRA_OUTPUT_DIR" -maxdepth 1 -name 'Folentra-PDF-*-universal.dmg' -print -quit)"
+          [[ -n "$dmg" ]]
+          hdiutil verify "$dmg"
+          if [[ -n "${MACOS_SIGN_IDENTITY:-}" ]]; then
+            codesign --verify --verbose=2 "$dmg"
+            app="$FOLENTRA_OUTPUT_DIR/Folentra PDF.app"
+            codesign --verify --deep --strict --verbose=2 "$app"
+            codesign -dv --verbose=4 "$app" 2>&1 |
+              grep -F "Authority=$MACOS_SIGN_IDENTITY"
+          fi
+          if [[ -n "${MACOS_NOTARY_PROFILE:-}" ]]; then
+            xcrun stapler validate "$dmg"
+            spctl --assess --type execute --verbose=4 "$FOLENTRA_OUTPUT_DIR/Folentra PDF.app"
+            spctl --assess --type open --context context:primary-signature --verbose=4 "$dmg"
+          fi
+      - uses: actions/upload-artifact@v7
+        with:
+          name: folentra-pdf-macos
+          path: |
+            release-output/Folentra-PDF-*-universal.dmg
+            release-output/Folentra-PDF-*-universal.dmg.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    name: Reunir artefactos
+    needs: [windows, linux, macos]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: folentra-pdf-*
+          path: release
+          merge-multiple: true
+      - name: Sumas SHA-256
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd release
+          find . -maxdepth 1 -type f ! -name '*.sha256' -printf '%f\n' |
+            sort |
+            xargs sha256sum >SHA256SUMS.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: folentra-pdf-release
+          path: release/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publicar GitHub Release para la etiqueta
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" release/* --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" release/* \
+              --generate-notes \
+              --title "Folentra PDF ${GITHUB_REF_NAME#v}"
+          fi

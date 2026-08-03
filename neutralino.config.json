@@ -1,0 +1,73 @@
+{
+  "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
+  "applicationId": "com.folentrapdf.app",
+  "applicationName": "Folentra PDF",
+  "applicationIcon": "public/icon.png",
+  "author": "Xihuitl Systems",
+  "description": "Lector y editor PDF ligero con visor de presentaciones de solo lectura.",
+  "copyright": "Copyright © 2026 Xihuitl Systems",
+  "version": "1.6.1",
+  "defaultMode": "window",
+  "port": 0,
+  "documentRoot": "/dist-web/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "tokenSecurity": "one-time",
+  "nativeAllowList": [
+    "app.exit",
+    "app.getConfig",
+    "filesystem.readBinaryFile",
+    "filesystem.readDirectory",
+    "filesystem.writeBinaryFile",
+    "filesystem.copy",
+    "filesystem.createDirectory",
+    "filesystem.move",
+    "filesystem.remove",
+    "filesystem.getStats",
+    "filesystem.getJoinedPath",
+    "os.showOpenDialog",
+    "os.showSaveDialog",
+    "os.showFolderDialog",
+    "os.execCommand",
+    "os.getPath",
+    "os.open",
+    "window.setTitle",
+    "events.on"
+  ],
+  "globalVariables": {},
+  "logging": {
+    "enabled": false,
+    "writeToLogFile": false
+  },
+  "modes": {
+    "window": {
+      "title": "Folentra PDF",
+      "icon": "/dist-web/icon.png",
+      "width": 1180,
+      "height": 760,
+      "minWidth": 360,
+      "minHeight": 420,
+      "center": true,
+      "resizable": true,
+      "maximize": false,
+      "fullScreen": false,
+      "alwaysOnTop": false,
+      "borderless": false,
+      "hidden": false,
+      "enableInspector": false,
+      "openInspectorOnStartup": false,
+      "exitProcessOnClose": false,
+      "injectGlobals": true,
+      "injectClientLibrary": false,
+      "useSavedState": false
+    }
+  },
+  "cli": {
+    "binaryName": "folentra-pdf",
+    "resourcesPath": "/dist-web/",
+    "resourcesExclude": ".*\\.map$",
+    "binaryVersion": "6.7.0",
+    "clientVersion": "6.9.0"
+  }
+}

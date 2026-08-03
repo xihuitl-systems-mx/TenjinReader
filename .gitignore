@@ -1,0 +1,57 @@
+# Dependencias y cachés de herramientas
+node_modules/
+.vite/
+.cache/
+.neu/
+coverage/
+
+# Binarios descargados y resultados reproducibles
+bin/
+build/
+dist/
+dist-web/
+release-output/
+installer/Output/
+outputs/
+tmp/
+
+# Artefactos de publicación
+Folentra-PDF-*
+SHA256SUMS.txt
+*.AppImage
+*.dmg
+*.exe
+*.msi
+*.zip
+*.tar.gz
+
+# Registros y archivos temporales
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# Secretos y material de firma: nunca deben versionarse
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+*.cer
+*.crt
+*.der
+*.jks
+*.keystore
+*.mobileprovision
+
+# Archivos locales del sistema y del editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+

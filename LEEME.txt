@@ -1,0 +1,91 @@
+FOLENTRA PDF 1.6.1
+==================
+
+Lector y editor PDF ligero con visor de presentaciones de solo lectura.
+
+WINDOWS (INSTALADOR)
+  Ejecuta Folentra-PDF-1.6.1-Setup-x64.exe. Elige "todos los usuarios" para
+  instalar en C:\Program Files (Windows pedirá permisos de administrador), o
+  "solo para mí" para instalar sin elevar permisos. El asistente siempre
+  permite elegir la carpeta de destino.
+
+  Requiere Windows 10 u 11 de 64 bits y Microsoft Edge WebView2 Runtime.
+  Si vas a cambiar de "solo para mí" a "todos los usuarios", desinstala antes
+  la copia anterior para evitar conservar dos instalaciones.
+
+LECTOR PREDETERMINADO
+  En la última pantalla marca "Elegir Folentra PDF como lector predeterminado".
+  Windows abrirá su configuración para que confirmes PDF y, si quieres, PPT,
+  PPTX, ODP u ODF.
+
+WINDOWS (PORTÁTIL)
+  Descomprime el paquete y ejecuta Folentra-PDF.exe.
+
+LINUX x64
+  chmod +x Folentra-PDF-1.6.1-x86_64.AppImage
+  ./Folentra-PDF-1.6.1-x86_64.AppImage
+
+macOS
+  Abre Folentra-PDF-1.6.1-universal.dmg y arrastra Folentra PDF a Applications.
+  Para una distribución sin advertencias de Gatekeeper, el DMG debe firmarse
+  con Developer ID y notarizarse en Apple desde un equipo macOS.
+
+FIRMA
+  El nombre "Xihuitl Systems" solo aparece como editor verificado si el
+  certificado público fue emitido tras validar legalmente esa identidad.
+  Consulta docs/CODE_SIGNING.md en el paquete de código fuente.
+
+FUNCIONES PDF
+  Leer, buscar, ampliar, rellenar campos interactivos, añadir texto, resaltar,
+  dibujar, girar o eliminar páginas y guardar una copia. La herramienta
+  "Campo AcroForm" permite dibujar nuevos cuadros rellenables. Los campos
+  permanecen interactivos después de guardar.
+
+  También permite unir, dividir, comprimir y ordenar PDF; añadir o quitar
+  páginas; aplicar una firma manuscrita visible; y convertir el PDF abierto a
+  Word, PowerPoint o JPG. La firma visible no es una firma digital
+  criptográfica. La compresión es sin pérdida y puede no reducir archivos que
+  ya estén optimizados. Al dividir se muestra el total, todas las páginas y la
+  vista previa de los archivos resultantes.
+
+  "Guardar" actualiza el PDF abierto. La flecha contigua abre "Guardar como".
+  Haz clic en el nombre del PDF para cambiar el nombre del mismo archivo al
+  guardar. Los PDF escaneados con imágenes JPEG 2000 se decodifican localmente.
+
+  "Proteger PDF" crea una copia cifrada con contraseña AES-256 y "Desbloquear
+  PDF" quita la protección tras autenticarse. Las contraseñas se procesan solo
+  en el equipo y no se guardan. Estas operaciones necesitan cargar el archivo
+  completo en memoria y no modifican PDF firmados digitalmente.
+
+CONVERTIR A PDF
+  JPG se convierte directamente. Word, PowerPoint y Excel requieren que
+  LibreOffice esté instalado en el equipo.
+
+PDF/A-4
+  La ventana inicial puede crear una copia visual PDF/A-4 con color sRGB. Las
+  páginas se rasterizan: el texto deja de ser seleccionable; formularios,
+  enlaces y comentarios se aplanan; y no se transfieren firmas digitales ni
+  adjuntos. Conserva el original y valida la copia según tu flujo de archivo.
+
+ARCHIVOS GRANDES
+  No existe un límite fijo de tamaño para PDF. La apertura usa lectura por
+  rangos para mostrar antes la primera página; el límite práctico depende de
+  los recursos del equipo y las conversiones requieren más memoria que leer.
+
+PRESENTACIONES
+  PPT, PPTX, ODP y ODF se abren en modo de solo lectura y no se modifican. Para
+  mantener texto e imágenes en su posición, la versión de escritorio usa una
+  vista PDF generada localmente con LibreOffice. La vista se reutiliza si el
+  original conserva ruta, tamaño y fecha; la caché se limita a 32 vistas o
+  1 GiB. PPTX dispone de un visor interno de respaldo; los otros formatos
+  requieren LibreOffice. Haz clic en el nombre para renombrar la presentación
+  original y usa "Convertir" para guardar la presentación abierta como PDF.
+
+PRIVACIDAD
+  Los documentos se procesan en tu equipo y la aplicación no usa servicios
+  remotos ni telemetría.
+
+NOTA
+  Puedes rellenar los campos existentes o crear campos de texto nuevos. Las
+  demás ediciones añaden contenido visual; no sustituyen ni refluyen el texto
+  original. Consulta README.md para detalles y atajos.
