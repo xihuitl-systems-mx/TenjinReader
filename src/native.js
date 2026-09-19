@@ -19,9 +19,9 @@ import {
 } from "./pdf-source.js";
 import { replaceFileTransaction } from "./file-transaction.js";
 
-const APP_TITLE = "Folentra PDF";
-const TEMP_DIRECTORY_PREFIX = "folentra-pdf-";
-const PRESENTATION_CACHE_DIRECTORY = "folentra-pdf-presentation-previews-v1";
+const APP_TITLE = "TenjinReader";
+const TEMP_DIRECTORY_PREFIX = "tenjinreader-";
+const PRESENTATION_CACHE_DIRECTORY = "tenjinreader-presentation-previews-v1";
 const PRESENTATION_CACHE_ENTRY = /^v1-[a-f\d]{16}$/iu;
 const DOCUMENT_ACCEPT = [
   ".pdf",
@@ -532,7 +532,7 @@ function assertPresentationCachePath(root, candidate, { allowRoot = false } = {}
 
 /**
  * Returns a narrowly-scoped native backend for persistent presentation previews.
- * Deletion is limited to immediate versioned children owned by Folentra PDF.
+ * Deletion is limited to immediate versioned children owned by TenjinReader.
  */
 export async function getPresentationPreviewCacheBackend() {
   if (!isNeutralinoRuntime()) {
@@ -765,7 +765,7 @@ export async function removeTemporaryDirectory(path) {
     ? normalizedPath.slice(normalizedRoot.length + 1)
     : "";
   if (!relative.startsWith(TEMP_DIRECTORY_PREFIX) || relative.includes("/")) {
-    throw new Error("Se rechazó una ruta temporal que no pertenece a Folentra PDF.");
+    throw new Error("Se rechazó una ruta temporal que no pertenece a TenjinReader.");
   }
   try {
     await filesystem.remove(path);

@@ -81,7 +81,7 @@ if ($version -notmatch "^[0-9A-Za-z][0-9A-Za-z.+-]*$") {
 }
 
 $binary = Resolve-RequiredFile `
-    (Join-Path $ProjectRoot "dist\folentra-pdf\folentra-pdf-linux_x64") `
+    (Join-Path $ProjectRoot "dist\tenjinreader\tenjinreader-linux_x64") `
     "el binario Neutralino Linux x86_64"
 $icon = Resolve-RequiredFile (Join-Path $ProjectRoot "public\icon.png") "el icono PNG"
 $pdfIcon = Resolve-RequiredFile `
@@ -128,7 +128,7 @@ if (Test-Path -LiteralPath $buildRoot) {
     Remove-Item -LiteralPath $buildRoot -Recurse -Force
 }
 
-$appDir = Join-Path $buildRoot "FolentraPDF.AppDir"
+$appDir = Join-Path $buildRoot "TenjinReader.AppDir"
 $binaryDirectory = Join-Path $appDir "usr\bin"
 $applicationsDirectory = Join-Path $appDir "usr\share\applications"
 $iconsDirectory = Join-Path $appDir "usr\share\icons\hicolor\512x512\apps"
@@ -136,9 +136,9 @@ $mimeIconsDirectory = Join-Path $appDir "usr\share\icons\hicolor\512x512\mimetyp
 New-Item -ItemType Directory -Force -Path `
     $binaryDirectory, $applicationsDirectory, $iconsDirectory, $mimeIconsDirectory | Out-Null
 
-$desktopName = "com.folentrapdf.app.desktop"
-$iconName = "com.folentrapdf.app.png"
-Copy-Item -LiteralPath $binary -Destination (Join-Path $binaryDirectory "Folentra-PDF")
+$desktopName = "io.tenjinreader.app.desktop"
+$iconName = "io.tenjinreader.app.png"
+Copy-Item -LiteralPath $binary -Destination (Join-Path $binaryDirectory "TenjinReader")
 Copy-Item -LiteralPath $icon -Destination (Join-Path $appDir $iconName)
 Copy-Item -LiteralPath $icon -Destination (Join-Path $appDir ".DirIcon")
 Copy-Item -LiteralPath $icon -Destination (Join-Path $iconsDirectory $iconName)
@@ -157,7 +157,7 @@ $appRun = @'
 #!/bin/sh
 set -eu
 HERE="${APPDIR:-$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)}"
-exec "$HERE/usr/bin/Folentra-PDF" "$@"
+exec "$HERE/usr/bin/TenjinReader" "$@"
 '@
 Write-Utf8NoBom (Join-Path $appDir "AppRun") ($appRun + "`n")
 
@@ -165,10 +165,10 @@ $desktop = @"
 [Desktop Entry]
 Type=Application
 Version=1.0
-Name=Folentra PDF
+Name=TenjinReader
 Comment=Lector y editor PDF ligero con visor de presentaciones
-Exec=Folentra-PDF %F
-Icon=com.folentrapdf.app
+Exec=TenjinReader %F
+Icon=io.tenjinreader.app
 Terminal=false
 Categories=Office;Viewer;
 MimeType=application/pdf;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.formula;
@@ -179,10 +179,10 @@ Write-Utf8NoBom $desktopPath ($desktop + "`n")
 Copy-Item -LiteralPath $desktopPath -Destination (Join-Path $applicationsDirectory $desktopName)
 
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
-$outputName = "Folentra-PDF-$version-x86_64.AppImage"
+$outputName = "TenjinReader-$version-x86_64.AppImage"
 $outputPath = [IO.Path]::GetFullPath((Join-Path $OutputDirectory $outputName))
 $temporaryOutput = Join-Path $buildRoot $outputName
-$squashfsPath = Join-Path $buildRoot "folentra-pdf.squashfs"
+$squashfsPath = Join-Path $buildRoot "tenjinreader.squashfs"
 
 $oldPath = $env:Path
 try {
@@ -197,7 +197,7 @@ try {
         "-no-xattrs",
         "-repro-time", "0",
         "-p", "AppRun m 0755 0 0",
-        "-p", "usr/bin/Folentra-PDF m 0755 0 0"
+        "-p", "usr/bin/TenjinReader m 0755 0 0"
     )
     & $MksquashfsPath @arguments
     if ($LASTEXITCODE -ne 0) {

@@ -16,7 +16,7 @@ outputs/
 tmp/
 
 # Artefactos de publicación
-Folentra-PDF-*
+TenjinReader-*
 SHA256SUMS.txt
 *.AppImage
 *.dmg

@@ -16,16 +16,16 @@ need_command() {
 
 show_help() {
   cat <<'EOF'
-Construye un bundle .app universal real y un DMG de Folentra PDF.
+Construye un bundle .app universal real y un DMG de TenjinReader.
 
 Uso:
   bash scripts/build_macos_dmg.sh
 
 Variables generales:
-  FOLENTRA_MACOS_BINARY Binario Neutralino universal.
-  FOLENTRA_ICON_PNG     Icono PNG de la aplicación.
-  FOLENTRA_OUTPUT_DIR   Carpeta de salida.
-  MACOS_BUNDLE_ID       Identificador del bundle (com.folentrapdf.app).
+  TENJINREADER_MACOS_BINARY Binario Neutralino universal.
+  TENJINREADER_ICON_PNG     Icono PNG de la aplicación.
+  TENJINREADER_OUTPUT_DIR   Carpeta de salida.
+  MACOS_BUNDLE_ID       Identificador del bundle (io.tenjinreader.app).
   MACOS_BUNDLE_VERSION  CFBundleVersion; por defecto usa package.json.
   SOURCE_DATE_EPOCH     Época para normalizar el staging (por defecto, 0).
 
@@ -79,12 +79,12 @@ need_command touch
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
 DEFAULT_OUTPUT_DIR="$(CDPATH= cd -- "$PROJECT_ROOT/../.." && pwd)/outputs"
-OUTPUT_DIR="${FOLENTRA_OUTPUT_DIR:-$DEFAULT_OUTPUT_DIR}"
-BINARY="${FOLENTRA_MACOS_BINARY:-$PROJECT_ROOT/dist/folentra-pdf/folentra-pdf-mac_universal}"
-ICON="${FOLENTRA_ICON_PNG:-$PROJECT_ROOT/public/icon.png}"
+OUTPUT_DIR="${TENJINREADER_OUTPUT_DIR:-$DEFAULT_OUTPUT_DIR}"
+BINARY="${TENJINREADER_MACOS_BINARY:-$PROJECT_ROOT/dist/tenjinreader/tenjinreader-mac_universal}"
+ICON="${TENJINREADER_ICON_PNG:-$PROJECT_ROOT/public/icon.png}"
 PDF_ICON="$PROJECT_ROOT/installer/PdfDocument.png"
 PRESENTATION_ICON="$PROJECT_ROOT/installer/PptxDocument.png"
-BUNDLE_ID="${MACOS_BUNDLE_ID:-com.folentrapdf.app}"
+BUNDLE_ID="${MACOS_BUNDLE_ID:-io.tenjinreader.app}"
 SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-0}"
 
 [[ "$SOURCE_DATE_EPOCH" =~ ^[0-9]+$ ]] \
@@ -151,21 +151,21 @@ if [[ -n "$NOTARY_PROFILE" ]]; then
 fi
 
 mkdir -p -- "$OUTPUT_DIR"
-WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/folentra-pdf-macos.XXXXXX")"
+WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/tenjinreader-macos.XXXXXX")"
 trap 'rm -rf -- "$WORK_DIR"' EXIT
 
-APP_NAME="Folentra PDF"
+APP_NAME="TenjinReader"
 APP_BUNDLE="$WORK_DIR/$APP_NAME.app"
 CONTENTS="$APP_BUNDLE/Contents"
 MACOS_DIR="$CONTENTS/MacOS"
 RESOURCES_DIR="$CONTENTS/Resources"
-APP_ICONSET="$WORK_DIR/FolentraPDF.iconset"
+APP_ICONSET="$WORK_DIR/TenjinReader.iconset"
 PDF_ICONSET="$WORK_DIR/PdfDocument.iconset"
 PRESENTATION_ICONSET="$WORK_DIR/PptxDocument.iconset"
 DMG_ROOT="$WORK_DIR/dmg-root"
-TEMP_DMG="$WORK_DIR/Folentra-PDF-${VERSION}-universal.dmg"
-APP_OUTPUT="$OUTPUT_DIR/Folentra PDF.app"
-DMG_OUTPUT="$OUTPUT_DIR/Folentra-PDF-${VERSION}-universal.dmg"
+TEMP_DMG="$WORK_DIR/TenjinReader-${VERSION}-universal.dmg"
+APP_OUTPUT="$OUTPUT_DIR/TenjinReader.app"
+DMG_OUTPUT="$OUTPUT_DIR/TenjinReader-${VERSION}-universal.dmg"
 DMG_NAME="$(basename -- "$DMG_OUTPUT")"
 
 mkdir -p \
@@ -200,7 +200,7 @@ make_iconset() {
   iconutil -c icns "$iconset" -o "$RESOURCES_DIR/$destination"
 }
 
-make_iconset "$ICON" "$APP_ICONSET" FolentraPDF.icns
+make_iconset "$ICON" "$APP_ICONSET" TenjinReader.icns
 make_iconset "$PDF_ICON" "$PDF_ICONSET" PdfDocument.icns
 make_iconset "$PRESENTATION_ICON" "$PRESENTATION_ICONSET" PptxDocument.icns
 
@@ -212,7 +212,7 @@ cat >"$CONTENTS/Info.plist" <<EOF
   <key>CFBundleDevelopmentRegion</key>
   <string>es</string>
   <key>CFBundleDisplayName</key>
-  <string>Folentra PDF</string>
+  <string>TenjinReader</string>
   <key>CFBundleDocumentTypes</key>
   <array>
     <dict>
@@ -255,15 +255,15 @@ cat >"$CONTENTS/Info.plist" <<EOF
     </dict>
   </array>
   <key>CFBundleExecutable</key>
-  <string>Folentra PDF</string>
+  <string>TenjinReader</string>
   <key>CFBundleIconFile</key>
-  <string>FolentraPDF</string>
+  <string>TenjinReader</string>
   <key>CFBundleIdentifier</key>
   <string>$BUNDLE_ID</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
-  <string>Folentra PDF</string>
+  <string>TenjinReader</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
@@ -303,7 +303,7 @@ else
 fi
 
 if [[ -n "$NOTARY_PROFILE" ]]; then
-  APP_NOTARY_ZIP="$WORK_DIR/Folentra-PDF-notary.zip"
+  APP_NOTARY_ZIP="$WORK_DIR/TenjinReader-notary.zip"
   ditto -c -k --sequesterRsrc --keepParent "$APP_BUNDLE" "$APP_NOTARY_ZIP"
   xcrun notarytool submit "$APP_NOTARY_ZIP" \
     --keychain-profile "$NOTARY_PROFILE" \
@@ -328,7 +328,7 @@ hdiutil create \
   -fs HFS+ \
   -format UDZO \
   -ov \
-  -volname "Folentra PDF" \
+  -volname "TenjinReader" \
   -srcfolder "$DMG_ROOT" \
   "$TEMP_DMG"
 

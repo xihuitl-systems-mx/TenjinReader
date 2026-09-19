@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
-  <title id="title">Folentra PDF</title>
-  <rect width="512" height="512" rx="118" fill="#C94F4F"/>
+  <title id="title">TenjinReader</title>
+  <rect width="512" height="512" rx="118" fill="#E66A2C"/>
   <path
     d="M154 108h139l66 67v229H154a30 30 0 0 1-30-30V138a30 30 0 0 1 30-30Z"
     fill="#fff"
     opacity=".96"
   />
-  <path d="M293 108v67h66" fill="#F4E2E2"/>
+  <path d="M293 108v67h66" fill="#F9D9C7"/>
   <path
     d="M293 108v67h66"
     fill="none"
-    stroke="#C94F4F"
+    stroke="#E66A2C"
     stroke-linecap="round"
     stroke-linejoin="round"
     stroke-width="18"
@@ -18,12 +18,12 @@
   />
   <path
     d="M370 179c-83 5-142 44-162 101-10 29-2 56 18 67 20 12 48 1 69-18 42-38 66-87 75-150Z"
-    fill="#efb933"
+    fill="#FFB32C"
   />
   <path
     d="M180 365c40-72 91-120 161-153M229 302l2-51M275 260l53-2"
     fill="none"
-    stroke="#963B3B"
+    stroke="#A8451B"
     stroke-linecap="round"
     stroke-linejoin="round"
     stroke-width="17"

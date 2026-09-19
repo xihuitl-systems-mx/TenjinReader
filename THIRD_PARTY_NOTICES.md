@@ -1,6 +1,6 @@
 # Avisos de software de terceros
 
-Folentra PDF incluye o utiliza los siguientes proyectos de código abierto:
+TenjinReader incluye o utiliza los siguientes proyectos de código abierto:
 
 | Proyecto | Versión | Licencia | Fuente |
 | --- | ---: | --- | --- |

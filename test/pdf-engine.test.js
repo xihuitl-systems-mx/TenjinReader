@@ -19,7 +19,7 @@ import {
 async function createFixture(pageCount = 3) {
   const document = await PDFDocument.create();
   document.setTitle('Documento de prueba');
-  document.setAuthor('Folentra PDF');
+  document.setAuthor('TenjinReader');
 
   for (let index = 0; index < pageCount; index += 1) {
     document.addPage([200 + index * 10, 300 + index * 10]);
@@ -268,7 +268,7 @@ test('uses original indices for rotation and descending page deletion', async ()
   assert.equal(reopened.getPage(0).getHeight(), 310);
   assert.equal(reopened.getPage(0).getRotation().angle, 90);
   assert.equal(reopened.getTitle(), 'Documento de prueba');
-  assert.equal(reopened.getAuthor(), 'Folentra PDF');
+  assert.equal(reopened.getAuthor(), 'TenjinReader');
 });
 
 test('rotation is a delta from the source page rotation', async () => {
@@ -298,14 +298,14 @@ test('creates uniquely named interactive AcroForm text fields with appearances',
   const fixture = await PDFDocument.create();
   const page = fixture.addPage([300, 200]);
   const fixtureForm = fixture.getForm();
-  const existing = fixtureForm.createTextField('FolentraPDF_Campo_1');
+  const existing = fixtureForm.createTextField('TenjinReader_Campo_1');
   existing.addToPage(page, {
     x: 20,
     y: 145,
     width: 120,
     height: 24,
   });
-  const nested = fixtureForm.createTextField('FolentraPDF_Campo_2.child');
+  const nested = fixtureForm.createTextField('TenjinReader_Campo_2.child');
   nested.addToPage(page, {
     x: 155,
     y: 145,
@@ -348,14 +348,14 @@ test('creates uniquely named interactive AcroForm text fields with appearances',
   assert.deepEqual(
     form.getFields().map((field) => field.getName()),
     [
-      'FolentraPDF_Campo_1',
-      'FolentraPDF_Campo_2.child',
-      'FolentraPDF_Campo_3',
-      'FolentraPDF_Campo_4',
+      'TenjinReader_Campo_1',
+      'TenjinReader_Campo_2.child',
+      'TenjinReader_Campo_3',
+      'TenjinReader_Campo_4',
     ],
   );
 
-  for (const fieldName of ['FolentraPDF_Campo_3', 'FolentraPDF_Campo_4']) {
+  for (const fieldName of ['TenjinReader_Campo_3', 'TenjinReader_Campo_4']) {
     const field = form.getTextField(fieldName);
     assert.equal(field.getText(), undefined);
     assert.equal(field.needsAppearancesUpdate(), false);
@@ -371,7 +371,7 @@ test('creates uniquely named interactive AcroForm text fields with appearances',
   const annotations = reopened.getPage(0).node.Annots();
   assert.equal(annotations.size(), 4);
   assert.deepEqual(
-    form.getTextField('FolentraPDF_Campo_3').acroField.getWidgets()[0].getRectangle(),
+    form.getTextField('TenjinReader_Campo_3').acroField.getWidgets()[0].getRectangle(),
     { x: 30, y: 90, width: 180, height: 28 },
   );
 });

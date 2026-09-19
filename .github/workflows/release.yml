@@ -66,7 +66,7 @@ jobs:
           $version = (Get-Content -Raw package.json | ConvertFrom-Json).version
           $outputDir = Join-Path $env:GITHUB_WORKSPACE "release-output"
           New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
-          $setup = Join-Path $outputDir "Folentra-PDF-$version-Setup-x64.exe"
+          $setup = Join-Path $outputDir "TenjinReader-$version-Setup-x64.exe"
           $iscc = (Get-Command ISCC.exe -ErrorAction Stop).Source
           $isReleaseTag = $env:GITHUB_REF -like "refs/tags/v*"
 
@@ -75,7 +75,7 @@ jobs:
               throw "Una publicación etiquetada requiere Authenticode válido; falta WINDOWS_PFX_BASE64."
             }
             Write-Warning "Se creará un instalador sin Authenticode: no existe WINDOWS_PFX_BASE64."
-            & $iscc "/O$outputDir" installer\PlumaReader.iss
+            & $iscc "/O$outputDir" installer\TenjinReader.iss
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
             exit 0
           }
@@ -111,16 +111,16 @@ jobs:
           if (-not $signTool) { throw "No se encontró signtool.exe." }
 
           .\scripts\sign_windows.ps1 `
-            -ApplicationExe .\dist\folentra-pdf\folentra-pdf-win_x64.exe `
+            -ApplicationExe .\dist\tenjinreader\tenjinreader-win_x64.exe `
             -SignToolPath $signTool `
             -CertificateThumbprint $certificate.Thumbprint `
             -ExpectedPublisher "Xihuitl Systems"
 
           $signCommand = (
-            '"{0}" sign /fd SHA256 /sha1 {1} /tr http://timestamp.digicert.com /td SHA256 /d $qFolentra PDF$q $f' `
+            '"{0}" sign /fd SHA256 /sha1 {1} /tr http://timestamp.digicert.com /td SHA256 /d $qTenjinReader$q $f' `
               -f $signTool, $certificate.Thumbprint
           )
-          & $iscc "/O$outputDir" "/DSIGN_RELEASE" "/Sxihuitl=$signCommand" installer\PlumaReader.iss
+          & $iscc "/O$outputDir" "/DSIGN_RELEASE" "/Sxihuitl=$signCommand" installer\TenjinReader.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           & $signTool verify /pa /all /v $setup
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -128,7 +128,7 @@ jobs:
         shell: pwsh
         run: |
           $version = (Get-Content -Raw package.json | ConvertFrom-Json).version
-          $setup = Resolve-Path "release-output\Folentra-PDF-$version-Setup-x64.exe"
+          $setup = Resolve-Path "release-output\TenjinReader-$version-Setup-x64.exe"
           $info = (Get-Item $setup).VersionInfo
           if ($info.CompanyName -ne "Xihuitl Systems") {
             throw "CompanyName inesperado: $($info.CompanyName)"
@@ -143,8 +143,8 @@ jobs:
           }
       - uses: actions/upload-artifact@v7
         with:
-          name: folentra-pdf-windows
-          path: release-output/Folentra-PDF-*-Setup-x64.exe
+          name: tenjinreader-windows
+          path: release-output/TenjinReader-*-Setup-x64.exe
           if-no-files-found: error
           retention-days: 14
 
@@ -188,28 +188,28 @@ jobs:
         shell: bash
         env:
           APPIMAGETOOL: ${{ runner.temp }}/appimagetool-x86_64.AppImage
-          FOLENTRA_OUTPUT_DIR: ${{ github.workspace }}/release-output
+          TENJINREADER_OUTPUT_DIR: ${{ github.workspace }}/release-output
         run: |
           set -Eeuo pipefail
           bash scripts/build_appimage.sh
-          image="$(find "$FOLENTRA_OUTPUT_DIR" -maxdepth 1 -name 'Folentra-PDF-*-x86_64.AppImage' -print -quit)"
+          image="$(find "$TENJINREADER_OUTPUT_DIR" -maxdepth 1 -name 'TenjinReader-*-x86_64.AppImage' -print -quit)"
           [[ -n "$image" ]]
           offset="$("$image" --appimage-offset)"
           [[ "$offset" =~ ^[0-9]+$ ]]
-          extract_dir="$RUNNER_TEMP/folentra-pdf-appimage-check"
+          extract_dir="$RUNNER_TEMP/tenjinreader-appimage-check"
           mkdir -p "$extract_dir"
           (
             cd "$extract_dir"
             "$image" --appimage-extract >/dev/null
             test -x squashfs-root/AppRun
-            test -x squashfs-root/usr/bin/Folentra-PDF
+            test -x squashfs-root/usr/bin/TenjinReader
           )
       - uses: actions/upload-artifact@v7
         with:
-          name: folentra-pdf-linux
+          name: tenjinreader-linux
           path: |
-            release-output/Folentra-PDF-*-x86_64.AppImage
-            release-output/Folentra-PDF-*-x86_64.AppImage.sha256
+            release-output/TenjinReader-*-x86_64.AppImage
+            release-output/TenjinReader-*-x86_64.AppImage.sha256
           if-no-files-found: error
           retention-days: 14
 
@@ -256,7 +256,7 @@ jobs:
             exit 1
           }
 
-          keychain="$RUNNER_TEMP/folentra-pdf.keychain-db"
+          keychain="$RUNNER_TEMP/tenjinreader.keychain-db"
           keychain_password="$(openssl rand -hex 24)"
           certificate="$RUNNER_TEMP/developer-id.p12"
           trap 'rm -f "$certificate"' EXIT
@@ -282,11 +282,11 @@ jobs:
           printf 'MACOS_SIGN_IDENTITY=%s\n' "$MACOS_DEVELOPER_IDENTITY" >>"$GITHUB_ENV"
 
           if [[ -n "$APPLE_ID" && -n "$APPLE_APP_PASSWORD" && -n "$APPLE_TEAM_ID" ]]; then
-            xcrun notarytool store-credentials folentra-pdf-notary \
+            xcrun notarytool store-credentials tenjinreader-notary \
               --apple-id "$APPLE_ID" \
               --password "$APPLE_APP_PASSWORD" \
               --team-id "$APPLE_TEAM_ID"
-            printf 'MACOS_NOTARY_PROFILE=folentra-pdf-notary\n' >>"$GITHUB_ENV"
+            printf 'MACOS_NOTARY_PROFILE=tenjinreader-notary\n' >>"$GITHUB_ENV"
           else
             if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
               printf 'Una publicación etiquetada requiere credenciales completas de notarización.\n' >&2
@@ -297,31 +297,31 @@ jobs:
       - name: Crear y validar DMG
         shell: bash
         env:
-          FOLENTRA_OUTPUT_DIR: ${{ github.workspace }}/release-output
+          TENJINREADER_OUTPUT_DIR: ${{ github.workspace }}/release-output
         run: |
           set -Eeuo pipefail
           bash scripts/build_macos_dmg.sh
-          dmg="$(find "$FOLENTRA_OUTPUT_DIR" -maxdepth 1 -name 'Folentra-PDF-*-universal.dmg' -print -quit)"
+          dmg="$(find "$TENJINREADER_OUTPUT_DIR" -maxdepth 1 -name 'TenjinReader-*-universal.dmg' -print -quit)"
           [[ -n "$dmg" ]]
           hdiutil verify "$dmg"
           if [[ -n "${MACOS_SIGN_IDENTITY:-}" ]]; then
             codesign --verify --verbose=2 "$dmg"
-            app="$FOLENTRA_OUTPUT_DIR/Folentra PDF.app"
+            app="$TENJINREADER_OUTPUT_DIR/TenjinReader.app"
             codesign --verify --deep --strict --verbose=2 "$app"
             codesign -dv --verbose=4 "$app" 2>&1 |
               grep -F "Authority=$MACOS_SIGN_IDENTITY"
           fi
           if [[ -n "${MACOS_NOTARY_PROFILE:-}" ]]; then
             xcrun stapler validate "$dmg"
-            spctl --assess --type execute --verbose=4 "$FOLENTRA_OUTPUT_DIR/Folentra PDF.app"
+            spctl --assess --type execute --verbose=4 "$TENJINREADER_OUTPUT_DIR/TenjinReader.app"
             spctl --assess --type open --context context:primary-signature --verbose=4 "$dmg"
           fi
       - uses: actions/upload-artifact@v7
         with:
-          name: folentra-pdf-macos
+          name: tenjinreader-macos
           path: |
-            release-output/Folentra-PDF-*-universal.dmg
-            release-output/Folentra-PDF-*-universal.dmg.sha256
+            release-output/TenjinReader-*-universal.dmg
+            release-output/TenjinReader-*-universal.dmg.sha256
           if-no-files-found: error
           retention-days: 14
 
@@ -334,7 +334,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v7
         with:
-          pattern: folentra-pdf-*
+          pattern: tenjinreader-*
           path: release
           merge-multiple: true
       - name: Sumas SHA-256
@@ -347,7 +347,7 @@ jobs:
             xargs sha256sum >SHA256SUMS.txt
       - uses: actions/upload-artifact@v7
         with:
-          name: folentra-pdf-release
+          name: tenjinreader-release
           path: release/*
           if-no-files-found: error
           retention-days: 30
@@ -363,5 +363,5 @@ jobs:
           else
             gh release create "$GITHUB_REF_NAME" release/* \
               --generate-notes \
-              --title "Folentra PDF ${GITHUB_REF_NAME#v}"
+              --title "TenjinReader ${GITHUB_REF_NAME#v}"
           fi

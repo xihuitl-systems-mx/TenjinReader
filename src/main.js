@@ -529,7 +529,7 @@ function setDocumentIdentity() {
     ui.fileKind.hidden = true;
     ui.fileMeta.hidden = true;
     ui.dirty.hidden = true;
-    void setTitle("Folentra PDF");
+    void setTitle("TenjinReader");
     return;
   }
 
@@ -551,7 +551,7 @@ function setDocumentIdentity() {
   ui.fileMeta.hidden = false;
   ui.dirty.hidden = !activeDocument.dirty;
   const prefix = activeDocument.dirty ? "• " : "";
-  void setTitle(`${prefix}${activeDocument.name} — Folentra PDF`);
+  void setTitle(`${prefix}${activeDocument.name} — TenjinReader`);
 }
 
 function setDirty(dirty) {
@@ -2077,7 +2077,7 @@ function requestPassword({ mode }) {
         confirmationInput.minLength = 8;
         confirmationInput.required = true;
         hint.className = "dialog-field-hint";
-        hint.textContent = "Usa al menos 8 caracteres. Si la pierdes, el documento no podrá recuperarse desde Folentra PDF.";
+        hint.textContent = "Usa al menos 8 caracteres. Si la pierdes, el documento no podrá recuperarse desde TenjinReader.";
         confirmationLabel.append(confirmationCaption, confirmationInput, hint);
         fields.append(confirmationLabel);
       }

@@ -45,8 +45,8 @@ SOURCE_DIRECTORIES = [
 ]
 
 NATIVE_INSTALLERS = [
-    OUTPUTS / f"Folentra-PDF-{VERSION}-x86_64.AppImage",
-    OUTPUTS / f"Folentra-PDF-{VERSION}-universal.dmg",
+    OUTPUTS / f"TenjinReader-{VERSION}-x86_64.AppImage",
+    OUTPUTS / f"TenjinReader-{VERSION}-universal.dmg",
 ]
 
 
@@ -59,12 +59,12 @@ def validate_release_metadata() -> None:
             "package.json y neutralino.config.json no tienen la misma versión.",
         )
 
-    installer_source = (PROJECT / "installer" / "PlumaReader.iss").read_text(
+    installer_source = (PROJECT / "installer" / "TenjinReader.iss").read_text(
         encoding="utf-8",
     )
     expected_lines = [
         f'#define MyAppVersion "{VERSION}"',
-        f'#define MySetupName "Folentra-PDF-{VERSION}-Setup-x64"',
+        f'#define MySetupName "TenjinReader-{VERSION}-Setup-x64"',
         f"VersionInfoVersion={VERSION}.0",
     ]
     missing = [line for line in expected_lines if line not in installer_source]
@@ -76,7 +76,7 @@ def validate_release_metadata() -> None:
 
     readme = (PROJECT / "README.md").read_text(encoding="utf-8")
     if not re.search(
-        rf"Folentra-PDF-{re.escape(VERSION)}-Setup-x64\.exe",
+        rf"TenjinReader-{re.escape(VERSION)}-Setup-x64\.exe",
         readme,
     ):
         raise RuntimeError("README.md no menciona el instalador de esta versión.")
@@ -113,13 +113,13 @@ def add_release_documents_zip(archive: zipfile.ZipFile, root: str) -> None:
 
 
 def make_windows_zip() -> Path:
-    binary = PROJECT / "dist" / "folentra-pdf" / "folentra-pdf-win_x64.exe"
-    destination = OUTPUTS / f"Folentra-PDF-{VERSION}-Windows-x64.zip"
-    root = "Folentra-PDF-Windows-x64"
+    binary = PROJECT / "dist" / "tenjinreader" / "tenjinreader-win_x64.exe"
+    destination = OUTPUTS / f"TenjinReader-{VERSION}-Windows-x64.zip"
+    root = "TenjinReader-Windows-x64"
     with zipfile.ZipFile(destination, "w") as archive:
         zip_add_bytes(
             archive,
-            f"{root}/Folentra-PDF.exe",
+            f"{root}/TenjinReader.exe",
             file_bytes(binary),
             0o755,
         )
@@ -145,17 +145,17 @@ def tar_add_bytes(
 
 
 def make_linux_tar(architecture: str) -> Path:
-    source_name = f"folentra-pdf-linux_{architecture}"
-    binary = PROJECT / "dist" / "folentra-pdf" / source_name
+    source_name = f"tenjinreader-linux_{architecture}"
+    binary = PROJECT / "dist" / "tenjinreader" / source_name
     label = "x64" if architecture == "x64" else "ARM64"
-    root = f"Folentra-PDF-Linux-{label}"
-    destination = OUTPUTS / f"Folentra-PDF-{VERSION}-Linux-{label}.tar.gz"
+    root = f"TenjinReader-Linux-{label}"
+    destination = OUTPUTS / f"TenjinReader-{VERSION}-Linux-{label}.tar.gz"
     with destination.open("wb") as raw:
         with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as compressed:
             with tarfile.open(fileobj=compressed, mode="w") as archive:
                 tar_add_bytes(
                     archive,
-                    f"{root}/Folentra-PDF",
+                    f"{root}/TenjinReader",
                     file_bytes(binary),
                     0o755,
                 )
@@ -184,8 +184,8 @@ def iter_source_files():
 
 
 def make_source_zip() -> Path:
-    destination = OUTPUTS / f"Folentra-PDF-{VERSION}-Source.zip"
-    root = "Folentra-PDF-Source"
+    destination = OUTPUTS / f"TenjinReader-{VERSION}-Source.zip"
+    root = "TenjinReader-Source"
     with zipfile.ZipFile(destination, "w") as archive:
         for path, relative_name in iter_source_files():
             zip_add_bytes(
@@ -206,14 +206,14 @@ def sha256(path: Path) -> str:
 
 
 def checked_installer() -> Path | None:
-    installer = OUTPUTS / f"Folentra-PDF-{VERSION}-Setup-x64.exe"
+    installer = OUTPUTS / f"TenjinReader-{VERSION}-Setup-x64.exe"
     if not installer.is_file():
         return None
 
     installer_inputs = [
-        PROJECT / "dist" / "folentra-pdf" / "folentra-pdf-win_x64.exe",
-        PROJECT / "installer" / "PlumaReader.iss",
-        PROJECT / "installer" / "FolentraPDF.ico",
+        PROJECT / "dist" / "tenjinreader" / "tenjinreader-win_x64.exe",
+        PROJECT / "installer" / "TenjinReader.iss",
+        PROJECT / "installer" / "TenjinReader.ico",
         PROJECT / "installer" / "PdfDocument.ico",
         PROJECT / "installer" / "PdfDocument.png",
         PROJECT / "installer" / "PptxDocument.ico",
@@ -229,14 +229,14 @@ def checked_installer() -> Path | None:
     if installer.stat().st_mtime_ns < newest_input.stat().st_mtime_ns:
         raise RuntimeError(
             "El instalador existente está desactualizado. Vuelve a compilar "
-            f"{PROJECT / 'installer' / 'PlumaReader.iss'} antes de empaquetar."
+            f"{PROJECT / 'installer' / 'TenjinReader.iss'} antes de empaquetar."
         )
     return installer
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Empaqueta Folentra PDF y genera sus sumas SHA-256.",
+        description="Empaqueta TenjinReader y genera sus sumas SHA-256.",
     )
     parser.add_argument(
         "--require-native-installers",

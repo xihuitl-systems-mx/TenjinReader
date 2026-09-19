@@ -1,8 +1,8 @@
-﻿#requires -Version 5.1
+#requires -Version 5.1
 
 <#
 .SYNOPSIS
-Firma un artefacto de Windows de Folentra PDF con Authenticode.
+Firma un artefacto de Windows de TenjinReader con Authenticode.
 
 .DESCRIPTION
 Firma, mediante SignTool, el ejecutable de la aplicación O el instalador.
@@ -17,14 +17,14 @@ Este script nunca recibe ni almacena contraseñas, PIN ni claves privadas.
 
 .EXAMPLE
 .\scripts\sign_windows.ps1 `
-  -ApplicationExe .\dist\folentra-pdf\folentra-pdf-win_x64.exe `
+  -ApplicationExe .\dist\tenjinreader\tenjinreader-win_x64.exe `
   -SignToolPath 'C:\Program Files (x86)\Windows Kits\10\bin\<SDK>\x64\signtool.exe' `
   -CertificateThumbprint '<HUELLA_SHA1_DE_40_HEX>' `
   -TimestampUrl 'http://timestamp.digicert.com'
 
 .EXAMPLE
 .\scripts\sign_windows.ps1 `
-  -InstallerExe ..\..\outputs\Folentra-PDF-1.6.1-Setup-x64.exe `
+  -InstallerExe ..\..\outputs\TenjinReader-1.6.1-Setup-x64.exe `
   -SignToolPath 'C:\Program Files (x86)\Windows Kits\10\bin\<SDK>\x64\signtool.exe' `
   -CertificateThumbprint '<HUELLA_SHA1_DE_40_HEX>' `
   -TimestampUrl 'http://timestamp.digicert.com'
@@ -66,7 +66,7 @@ param(
 
     [Parameter()]
     [ValidateNotNullOrEmpty()]
-    [string] $FileDescription = 'Folentra PDF',
+    [string] $FileDescription = 'TenjinReader',
 
     [Parameter()]
     [switch] $Force

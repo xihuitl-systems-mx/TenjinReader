@@ -15,7 +15,7 @@ const document = await PDFDocument.create();
 const firstPage = document.addPage([420, 595]);
 const secondPage = document.addPage([420, 595]);
 const font = await document.embedFont(StandardFonts.Helvetica);
-firstPage.drawText("Folentra PDF - prueba de seguridad", {
+firstPage.drawText("TenjinReader - prueba de seguridad", {
   x: 42,
   y: 535,
   font,

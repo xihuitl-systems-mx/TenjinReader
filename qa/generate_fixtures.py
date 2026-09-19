@@ -19,14 +19,14 @@ GOLD = RGBColor(0xEF, 0xB9, 0x33)
 def make_pdf() -> None:
     path = OUTPUT_DIR / "sample.pdf"
     document = canvas.Canvas(str(path), pagesize=(612, 792))
-    document.setTitle("Documento de prueba Folentra PDF")
-    document.setAuthor("Folentra PDF QA")
+    document.setTitle("Documento de prueba TenjinReader")
+    document.setAuthor("TenjinReader QA")
 
     document.setFillColor(HexColor("#236654"))
     document.rect(0, 700, 612, 92, stroke=0, fill=1)
     document.setFillColor(white)
     document.setFont("Helvetica-Bold", 28)
-    document.drawString(52, 742, "Folentra PDF")
+    document.drawString(52, 742, "TenjinReader")
     document.setFont("Helvetica", 12)
     document.drawString(52, 718, "Documento PDF de prueba")
     document.setFillColor(HexColor("#171a18"))

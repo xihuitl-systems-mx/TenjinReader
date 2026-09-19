@@ -454,7 +454,7 @@ const iconDefinitions = [
     destination: path.join(
       projectDirectory,
       "installer",
-      "FolentraPDF.ico",
+      "TenjinReader.ico",
     ),
   },
   {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
-  "applicationId": "com.folentrapdf.app",
-  "applicationName": "Folentra PDF",
+  "applicationId": "io.tenjinreader.app",
+  "applicationName": "TenjinReader",
   "applicationIcon": "public/icon.png",
   "author": "Xihuitl Systems",
   "description": "Lector y editor PDF ligero con visor de presentaciones de solo lectura.",
@@ -42,7 +42,7 @@
   },
   "modes": {
     "window": {
-      "title": "Folentra PDF",
+      "title": "TenjinReader",
       "icon": "/dist-web/icon.png",
       "width": 1180,
       "height": 760,
@@ -64,7 +64,7 @@
     }
   },
   "cli": {
-    "binaryName": "folentra-pdf",
+    "binaryName": "tenjinreader",
     "resourcesPath": "/dist-web/",
     "resourcesExclude": ".*\\.map$",
     "binaryVersion": "6.7.0",

@@ -222,8 +222,8 @@ function coreProperties({ title, description, keywords }) {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <dc:title>${xmlSafeText(title)}</dc:title>
-  <dc:creator>Folentra PDF - Xihuitl Systems</dc:creator>
-  <cp:lastModifiedBy>Folentra PDF - Xihuitl Systems</cp:lastModifiedBy>
+  <dc:creator>TenjinReader - Xihuitl Systems</dc:creator>
+  <cp:lastModifiedBy>TenjinReader - Xihuitl Systems</cp:lastModifiedBy>
   <dc:description>${xmlSafeText(description)}</dc:description>
   <cp:keywords>${xmlSafeText(keywords)}</cp:keywords>
   <dcterms:created xsi:type="dcterms:W3CDTF">${timestamp}</dcterms:created>
@@ -367,11 +367,11 @@ export async function pdfToDocx(pdfDocument) {
   zipFile(zip, "docProps/core.xml", coreProperties({
     title: "Documento convertido desde PDF",
     description: "Conversión de texto editable con diseño aproximado. No incluye OCR ni garantiza conservar tablas, columnas, tipografías o imágenes del PDF original.",
-    keywords: "Folentra PDF, DOCX, texto editable, sin OCR, diseño aproximado",
+    keywords: "TenjinReader, DOCX, texto editable, sin OCR, diseño aproximado",
   }));
   zipFile(zip, "docProps/app.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
-  <Application>Folentra PDF</Application>
+  <Application>TenjinReader</Application>
   <Company>Xihuitl Systems</Company>
   <Pages>${pageCount}</Pages>
   <AppVersion>1.3</AppVersion>
@@ -443,9 +443,9 @@ function imagePlacement(image, slide) {
 
 function pptxTheme() {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Folentra PDF">
+<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="TenjinReader">
   <a:themeElements>
-    <a:clrScheme name="Folentra PDF">
+    <a:clrScheme name="TenjinReader">
       <a:dk1><a:sysClr val="windowText" lastClr="000000"/></a:dk1><a:lt1><a:sysClr val="window" lastClr="FFFFFF"/></a:lt1>
       <a:dk2><a:srgbClr val="26322C"/></a:dk2><a:lt2><a:srgbClr val="F5F5F2"/></a:lt2>
       <a:accent1><a:srgbClr val="B53932"/></a:accent1><a:accent2><a:srgbClr val="236654"/></a:accent2>
@@ -453,8 +453,8 @@ function pptxTheme() {
       <a:accent5><a:srgbClr val="8D6A9F"/></a:accent5><a:accent6><a:srgbClr val="5F8F99"/></a:accent6>
       <a:hlink><a:srgbClr val="0563C1"/></a:hlink><a:folHlink><a:srgbClr val="954F72"/></a:folHlink>
     </a:clrScheme>
-    <a:fontScheme name="Folentra PDF"><a:majorFont><a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface=""/></a:majorFont><a:minorFont><a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface=""/></a:minorFont></a:fontScheme>
-    <a:fmtScheme name="Folentra PDF">
+    <a:fontScheme name="TenjinReader"><a:majorFont><a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface=""/></a:majorFont><a:minorFont><a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface=""/></a:minorFont></a:fontScheme>
+    <a:fmtScheme name="TenjinReader">
       <a:fillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"><a:tint val="50000"/><a:satMod val="300000"/></a:schemeClr></a:solidFill><a:solidFill><a:schemeClr val="phClr"><a:shade val="50000"/><a:satMod val="200000"/></a:schemeClr></a:solidFill></a:fillStyleLst>
       <a:lnStyleLst><a:ln w="9525"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:prstDash val="solid"/></a:ln><a:ln w="25400"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:prstDash val="solid"/></a:ln><a:ln w="38100"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:prstDash val="solid"/></a:ln></a:lnStyleLst>
       <a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle></a:effectStyleLst>
@@ -512,11 +512,11 @@ ${slideOverrides}
   zipFile(zip, "docProps/core.xml", coreProperties({
     title: "Presentación convertida desde PDF",
     description: "Conversión visual: cada página del PDF se rasterizó como una imagen JPEG de diapositiva completa. El texto, vectores y formularios no son editables en PowerPoint.",
-    keywords: "Folentra PDF, PPTX, JPEG, contenido rasterizado, no editable",
+    keywords: "TenjinReader, PPTX, JPEG, contenido rasterizado, no editable",
   }));
   zipFile(zip, "docProps/app.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
-  <Application>Folentra PDF</Application><PresentationFormat>Personalizado</PresentationFormat><Slides>${slides.length}</Slides><Notes>0</Notes><HiddenSlides>0</HiddenSlides><MMClips>0</MMClips><ScaleCrop>false</ScaleCrop><Company>Xihuitl Systems</Company><AppVersion>1.4</AppVersion>
+  <Application>TenjinReader</Application><PresentationFormat>Personalizado</PresentationFormat><Slides>${slides.length}</Slides><Notes>0</Notes><HiddenSlides>0</HiddenSlides><MMClips>0</MMClips><ScaleCrop>false</ScaleCrop><Company>Xihuitl Systems</Company><AppVersion>1.4</AppVersion>
 </Properties>`);
 
   const slideIds = slides.map(({ slideNumber }) => (
@@ -542,7 +542,7 @@ ${presentationRelationships}
   zipFile(zip, "ppt/theme/theme1.xml", pptxTheme());
   zipFile(zip, "ppt/slideMasters/slideMaster1.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <p:sldMaster xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
-  <p:cSld name="Folentra PDF">${emptyShapeTree()}</p:spTree></p:cSld>
+  <p:cSld name="TenjinReader">${emptyShapeTree()}</p:spTree></p:cSld>
   <p:clrMap accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" bg1="lt1" bg2="lt2" folHlink="folHlink" hlink="hlink" tx1="dk1" tx2="dk2"/>
   <p:sldLayoutIdLst><p:sldLayoutId id="1" r:id="rId1"/></p:sldLayoutIdLst>
   <p:txStyles><p:titleStyle/><p:bodyStyle/><p:otherStyle/></p:txStyles>

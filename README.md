@@ -1,6 +1,6 @@
-# Folentra PDF
+# TenjinReader
 
-Folentra PDF es una aplicación de escritorio portátil y ligera para Windows,
+TenjinReader es una aplicación de escritorio portátil y ligera para Windows,
 Linux y macOS. Lee PDF, permite añadir ediciones sencillas y abre PPT, PPTX,
 ODP y ODF en modo de solo lectura. Todo el documento se procesa localmente.
 
@@ -28,7 +28,7 @@ ODP y ODF en modo de solo lectura. Todo el documento se procesa localmente.
   el texto extraíble para editarlo y PowerPoint conserva la apariencia como una
   imagen por diapositiva.
 - Conversión local de Word, PowerPoint y Excel a PDF mediante LibreOffice, y de
-  imágenes JPG a PDF directamente en Folentra PDF.
+  imágenes JPG a PDF directamente en TenjinReader.
 - Conversión de PDF a PDF/A-4 desde la ventana inicial, como copia visual de
   archivo con perfil de color sRGB integrado.
 - **Guardar** actualiza el archivo abierto en la aplicación de escritorio. La
@@ -48,9 +48,9 @@ ODP y ODF en modo de solo lectura. Todo el documento se procesa localmente.
 ### Windows
 
 La opción recomendada es ejecutar
-`Folentra-PDF-1.6.1-Setup-x64.exe`. Al comenzar puedes elegir entre instalar
+`TenjinReader-1.6.1-Setup-x64.exe`. Al comenzar puedes elegir entre instalar
 para **todos los usuarios** o **solo para ti**. El primer modo solicita
-permisos de administrador y usa `C:\Program Files\Folentra PDF` por defecto; el
+permisos de administrador y usa `C:\Program Files\TenjinReader` por defecto; el
 segundo no solicita permisos y usa la carpeta de programas del usuario.
 Después, el asistente siempre permite cambiar la carpeta de destino. También
 crea un desinstalador, y los accesos directos son opcionales.
@@ -59,39 +59,39 @@ Si ya tenías una instalación para un solo usuario y quieres cambiar al modo de
 todos los usuarios, desinstala primero la copia anterior para evitar conservar
 dos instalaciones.
 
-En la última pantalla puedes marcar **Elegir Folentra PDF como lector
+En la última pantalla puedes marcar **Elegir TenjinReader como lector
 predeterminado**. Windows abrirá su panel de aplicaciones predeterminadas para
-que confirmes Folentra PDF para `.pdf` y, si quieres, `.ppt`, `.pptx`, `.odp` u
+que confirmes TenjinReader para `.pdf` y, si quieres, `.ppt`, `.pptx`, `.odp` u
 `.odf`. El instalador registra todas esas opciones, pero nunca reemplaza tus
 asociaciones actuales sin confirmación.
 
 También puedes descomprimir el paquete portátil y ejecutar
-`Folentra-PDF.exe`; esa versión no se instala.
+`TenjinReader.exe`; esa versión no se instala.
 
 La versión de Windows requiere Windows 10 u 11 de 64 bits y Microsoft Edge
 WebView2 Runtime, que normalmente ya está instalado en esos sistemas.
 
 ### Linux x64
 
-La opción recomendada es descargar `Folentra-PDF-1.6.1-x86_64.AppImage`,
+La opción recomendada es descargar `TenjinReader-1.6.1-x86_64.AppImage`,
 marcarlo como ejecutable y abrirlo:
 
 ```sh
-chmod +x Folentra-PDF-1.6.1-x86_64.AppImage
-./Folentra-PDF-1.6.1-x86_64.AppImage
+chmod +x TenjinReader-1.6.1-x86_64.AppImage
+./TenjinReader-1.6.1-x86_64.AppImage
 ```
 
 La aplicación usa WebKitGTK del sistema. En una distribución mínima puede ser
 necesario instalar `libwebkit2gtk-4.1-0` o el paquete equivalente.
 
 El paquete `.tar.gz` sigue disponible como alternativa portátil. En ese caso,
-descomprímelo, marca `Folentra-PDF` como ejecutable y ejecútalo directamente.
+descomprímelo, marca `TenjinReader` como ejecutable y ejecútalo directamente.
 
 ### macOS
 
-El proceso de publicación genera `Folentra-PDF-1.6.1-universal.dmg` en un host
+El proceso de publicación genera `TenjinReader-1.6.1-universal.dmg` en un host
 macOS. El paquete incluye una aplicación universal para Apple Silicon e Intel.
-Ábrelo y arrastra **Folentra PDF** a **Applications**.
+Ábrelo y arrastra **TenjinReader** a **Applications**.
 
 Un DMG creado sin una identidad **Developer ID Application** queda sin firma y
 sin notarización. Gatekeeper puede bloquearlo. La distribución pública sin
@@ -104,9 +104,9 @@ Los campos interactivos AcroForm se editan de forma nativa y permanecen
 rellenables en la copia guardada. Para convertir un recuadro dibujado en el PDF
 en un campo nuevo, elige **Campo AcroForm**, arrastra sobre la zona y guarda la
 copia. El cuadro se convierte en un campo de texto real que puede rellenarse
-en Folentra PDF y en lectores PDF compatibles.
+en TenjinReader y en lectores PDF compatibles.
 
-Las demás ediciones son visuales: al guardar, Folentra PDF añade el texto, los
+Las demás ediciones son visuales: al guardar, TenjinReader añade el texto, los
 resaltados y los trazos al PDF y aplica los cambios de página. No sustituye ni
 refluye el texto original del documento. Las anotaciones guardadas quedan
 integradas en la copia resultante.
@@ -124,7 +124,7 @@ respaldo; PPT, ODP y ODF requieren una instalación local de LibreOffice.
 convertirla. Animaciones, vídeo, audio, macros y transiciones no se reproducen,
 y nunca se habilitan herramientas de edición para estos formatos.
 
-Los PDF no tienen un límite de tamaño fijado por Folentra PDF. El visor solicita
+Los PDF no tienen un límite de tamaño fijado por TenjinReader. El visor solicita
 rangos de 1 MiB según los necesita y no precarga automáticamente el archivo
 completo, lo que acelera la primera apertura y reduce los picos de memoria. El
 límite práctico sigue dependiendo de la memoria, el disco, el WebView y la
@@ -141,7 +141,7 @@ alteran el área visible no vuelven a renderizar el documento.
 La compresión es estructural y sin pérdida: conserva texto, enlaces y
 formularios, pero un PDF ya optimizado puede no reducirse. La firma incluida es
 una marca manuscrita visible, no una firma digital criptográfica. Al unir o
-añadir páginas externas, Folentra PDF rechaza documentos con AcroForms, XFA o firmas
+añadir páginas externas, TenjinReader rechaza documentos con AcroForms, XFA o firmas
 digitales para no dañarlos.
 
 **Proteger PDF** cifra el contenido con AES-256 y exige una contraseña de al
@@ -150,7 +150,7 @@ proporciona una contraseña con permisos suficientes; algunos archivos requieren
 la contraseña de propietario. Estas operaciones conservan páginas y AcroForms,
 pero necesitan cargar el PDF completo en memoria. No se admite cifrado mediante
 certificados y se rechazan PDF firmados digitalmente, porque cambiar su cifrado
-invalidaría la firma. Folentra PDF no almacena la contraseña ni puede recuperar
+invalidaría la firma. TenjinReader no almacena la contraseña ni puede recuperar
 un archivo si se pierde.
 
 La conversión a Word usa texto extraíble y no incluye OCR; la conversión a
@@ -200,7 +200,7 @@ compila el script:
 
 ```powershell
 node scripts\make_installer_icon.mjs
-ISCC.exe installer\PlumaReader.iss
+ISCC.exe installer\TenjinReader.iss
 ```
 
 Para que Windows muestre **Editor: Xihuitl Systems**, tanto el ejecutable como

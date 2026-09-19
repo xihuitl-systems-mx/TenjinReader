@@ -182,7 +182,7 @@ test("the bundled real PDF completes the PDF.js raster-to-PDF/A-4 pipeline", asy
   try {
     pdfDocument = await loadingTask.promise;
     const result = await convertPdfToPdfA4(pdfDocument, {
-      title: "Muestra real de Folentra PDF",
+      title: "Muestra real de TenjinReader",
       date: "2026-07-31T20:00:00Z",
     });
     assert.equal(result.pageCount, pdfDocument.numPages);
@@ -191,8 +191,8 @@ test("the bundled real PDF completes the PDF.js raster-to-PDF/A-4 pipeline", asy
 
     // Allows this exact end-to-end fixture to be passed to veraPDF and Poppler
     // during release QA without committing generated binaries.
-    if (process.env.FOLENTRA_PDFA_QA_OUTPUT) {
-      await writeFile(process.env.FOLENTRA_PDFA_QA_OUTPUT, result.bytes);
+    if (process.env.TENJINREADER_PDFA_QA_OUTPUT) {
+      await writeFile(process.env.TENJINREADER_PDFA_QA_OUTPUT, result.bytes);
     }
   } finally {
     await loadingTask.destroy();

@@ -16,7 +16,7 @@ need_command() {
 
 show_help() {
   cat <<'EOF'
-Construye el AppImage x86_64 de Folentra PDF a partir del binario Neutralino.
+Construye el AppImage x86_64 de TenjinReader a partir del binario Neutralino.
 
 Uso:
   bash scripts/build_appimage.sh
@@ -24,9 +24,9 @@ Uso:
 Variables opcionales:
   APPIMAGETOOL          Ruta a appimagetool-x86_64.AppImage o appimagetool.
   APPIMAGE_GPG_KEY      Identidad GPG para crear una firma ASCII separada.
-  FOLENTRA_LINUX_BINARY Binario ELF x86_64 de Neutralino.
-  FOLENTRA_ICON_PNG     Icono PNG de la aplicación.
-  FOLENTRA_OUTPUT_DIR   Carpeta de salida.
+  TENJINREADER_LINUX_BINARY Binario ELF x86_64 de Neutralino.
+  TENJINREADER_ICON_PNG     Icono PNG de la aplicación.
+  TENJINREADER_OUTPUT_DIR   Carpeta de salida.
   SOURCE_DATE_EPOCH     Época usada para normalizar fechas (por defecto, 0).
 
 La firma GPG es opcional y separada. Si APPIMAGE_GPG_KEY no está definida, el
@@ -65,9 +65,9 @@ need_command tr
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
 DEFAULT_OUTPUT_DIR="$(CDPATH= cd -- "$PROJECT_ROOT/../.." && pwd)/outputs"
-OUTPUT_DIR="${FOLENTRA_OUTPUT_DIR:-$DEFAULT_OUTPUT_DIR}"
-BINARY="${FOLENTRA_LINUX_BINARY:-$PROJECT_ROOT/dist/folentra-pdf/folentra-pdf-linux_x64}"
-ICON="${FOLENTRA_ICON_PNG:-$PROJECT_ROOT/public/icon.png}"
+OUTPUT_DIR="${TENJINREADER_OUTPUT_DIR:-$DEFAULT_OUTPUT_DIR}"
+BINARY="${TENJINREADER_LINUX_BINARY:-$PROJECT_ROOT/dist/tenjinreader/tenjinreader-linux_x64}"
+ICON="${TENJINREADER_ICON_PNG:-$PROJECT_ROOT/public/icon.png}"
 PDF_ICON="$PROJECT_ROOT/installer/PdfDocument.png"
 PRESENTATION_ICON="$PROJECT_ROOT/installer/PptxDocument.png"
 SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-0}"
@@ -120,13 +120,13 @@ fi
   "APPIMAGETOOL no apunta a un archivo ejecutable: $APPIMAGE_TOOL"
 
 mkdir -p -- "$OUTPUT_DIR"
-WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/folentra-pdf-appimage.XXXXXX")"
+WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/tenjinreader-appimage.XXXXXX")"
 trap 'rm -rf -- "$WORK_DIR"' EXIT
 
-APPDIR="$WORK_DIR/FolentraPDF.AppDir"
-DESKTOP_NAME="com.folentrapdf.app.desktop"
-ICON_NAME="com.folentrapdf.app.png"
-OUTPUT_NAME="Folentra-PDF-${VERSION}-x86_64.AppImage"
+APPDIR="$WORK_DIR/TenjinReader.AppDir"
+DESKTOP_NAME="io.tenjinreader.app.desktop"
+ICON_NAME="io.tenjinreader.app.png"
+OUTPUT_NAME="TenjinReader-${VERSION}-x86_64.AppImage"
 OUTPUT_PATH="$OUTPUT_DIR/$OUTPUT_NAME"
 TEMP_OUTPUT="$WORK_DIR/$OUTPUT_NAME"
 
@@ -136,7 +136,7 @@ mkdir -p \
   "$APPDIR/usr/share/icons/hicolor/512x512/apps" \
   "$APPDIR/usr/share/icons/hicolor/512x512/mimetypes"
 
-cp -- "$BINARY" "$APPDIR/usr/bin/Folentra-PDF"
+cp -- "$BINARY" "$APPDIR/usr/bin/TenjinReader"
 cp -- "$ICON" "$APPDIR/$ICON_NAME"
 cp -- "$ICON" \
   "$APPDIR/usr/share/icons/hicolor/512x512/apps/$ICON_NAME"
@@ -155,17 +155,17 @@ cat >"$APPDIR/AppRun" <<'EOF'
 #!/bin/sh
 set -eu
 HERE="${APPDIR:-$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)}"
-exec "$HERE/usr/bin/Folentra-PDF" "$@"
+exec "$HERE/usr/bin/TenjinReader" "$@"
 EOF
 
 cat >"$APPDIR/$DESKTOP_NAME" <<EOF
 [Desktop Entry]
 Type=Application
 Version=1.0
-Name=Folentra PDF
+Name=TenjinReader
 Comment=Lector y editor PDF ligero con visor de presentaciones
-Exec=Folentra-PDF %F
-Icon=com.folentrapdf.app
+Exec=TenjinReader %F
+Icon=io.tenjinreader.app
 Terminal=false
 Categories=Office;Viewer;
 MimeType=application/pdf;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.formula;
@@ -175,7 +175,7 @@ EOF
 cp -- "$APPDIR/$DESKTOP_NAME" \
   "$APPDIR/usr/share/applications/$DESKTOP_NAME"
 
-chmod 0755 "$APPDIR/AppRun" "$APPDIR/usr/bin/Folentra-PDF"
+chmod 0755 "$APPDIR/AppRun" "$APPDIR/usr/bin/TenjinReader"
 chmod 0644 \
   "$APPDIR/$DESKTOP_NAME" \
   "$APPDIR/$ICON_NAME" \

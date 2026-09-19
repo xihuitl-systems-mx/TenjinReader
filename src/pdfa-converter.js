@@ -135,7 +135,7 @@ function streamObjectChunks(dictionary, bytes) {
 
 function makeXmp({ title, timestamp }) {
   return `<?xpacket begin="\uFEFF" id="W5M0MpCehiHzreSzNTczkc9d"?>
-<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Folentra PDF">
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="TenjinReader">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
       <pdfaid:part>${PDF_A4_PART}</pdfaid:part>
@@ -146,13 +146,13 @@ function makeXmp({ title, timestamp }) {
       <dc:title><rdf:Alt><rdf:li xml:lang="x-default">${xmlText(title)}</rdf:li></rdf:Alt></dc:title>
     </rdf:Description>
     <rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/">
-      <xmp:CreatorTool>Folentra PDF</xmp:CreatorTool>
+      <xmp:CreatorTool>TenjinReader</xmp:CreatorTool>
       <xmp:CreateDate>${timestamp}</xmp:CreateDate>
       <xmp:ModifyDate>${timestamp}</xmp:ModifyDate>
       <xmp:MetadataDate>${timestamp}</xmp:MetadataDate>
     </rdf:Description>
     <rdf:Description rdf:about="" xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
-      <pdf:Producer>Folentra PDF - Xihuitl Systems</pdf:Producer>
+      <pdf:Producer>TenjinReader - Xihuitl Systems</pdf:Producer>
       <pdf:PDFVersion>2.0</pdf:PDFVersion>
     </rdf:Description>
   </rdf:RDF>

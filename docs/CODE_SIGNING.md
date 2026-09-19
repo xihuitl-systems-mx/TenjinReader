@@ -1,4 +1,4 @@
-# Firma de código de Folentra PDF
+# Firma de código de TenjinReader
 
 ## Lo que significa «Editor» en Windows
 
@@ -100,8 +100,8 @@ $version = (Get-Content -LiteralPath .\package.json -Raw |
 $signTool = 'C:\Program Files (x86)\Windows Kits\10\bin\<VERSION_SDK>\x64\signtool.exe'
 $thumbprint = '<HUELLA_SHA1_DE_40_HEX>'
 $timestamp = 'http://timestamp.digicert.com'
-$application = '.\dist\folentra-pdf\folentra-pdf-win_x64.exe'
-$installer = "..\..\outputs\Folentra-PDF-$version-Setup-x64.exe"
+$application = '.\dist\tenjinreader\tenjinreader-win_x64.exe'
+$installer = "..\..\outputs\TenjinReader-$version-Setup-x64.exe"
 ```
 
 La URL anterior es solo un ejemplo conocido. En producción se debe usar la

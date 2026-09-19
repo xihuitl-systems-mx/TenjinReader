@@ -1,10 +1,10 @@
-FOLENTRA PDF 1.6.1
+TENJINREADER PDF 1.6.1
 ==================
 
 Lector y editor PDF ligero con visor de presentaciones de solo lectura.
 
 WINDOWS (INSTALADOR)
-  Ejecuta Folentra-PDF-1.6.1-Setup-x64.exe. Elige "todos los usuarios" para
+  Ejecuta TenjinReader-1.6.1-Setup-x64.exe. Elige "todos los usuarios" para
   instalar en C:\Program Files (Windows pedirá permisos de administrador), o
   "solo para mí" para instalar sin elevar permisos. El asistente siempre
   permite elegir la carpeta de destino.
@@ -14,19 +14,19 @@ WINDOWS (INSTALADOR)
   la copia anterior para evitar conservar dos instalaciones.
 
 LECTOR PREDETERMINADO
-  En la última pantalla marca "Elegir Folentra PDF como lector predeterminado".
+  En la última pantalla marca "Elegir TenjinReader como lector predeterminado".
   Windows abrirá su configuración para que confirmes PDF y, si quieres, PPT,
   PPTX, ODP u ODF.
 
 WINDOWS (PORTÁTIL)
-  Descomprime el paquete y ejecuta Folentra-PDF.exe.
+  Descomprime el paquete y ejecuta TenjinReader.exe.
 
 LINUX x64
-  chmod +x Folentra-PDF-1.6.1-x86_64.AppImage
-  ./Folentra-PDF-1.6.1-x86_64.AppImage
+  chmod +x TenjinReader-1.6.1-x86_64.AppImage
+  ./TenjinReader-1.6.1-x86_64.AppImage
 
 macOS
-  Abre Folentra-PDF-1.6.1-universal.dmg y arrastra Folentra PDF a Applications.
+  Abre TenjinReader-1.6.1-universal.dmg y arrastra TenjinReader a Applications.
   Para una distribución sin advertencias de Gatekeeper, el DMG debe firmarse
   con Developer ID y notarizarse en Apple desde un equipo macOS.
 

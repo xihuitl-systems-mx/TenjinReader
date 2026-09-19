@@ -721,7 +721,7 @@ function nextFormFieldName(usedRootNames, counter) {
   let fieldNumber = counter;
   let candidate;
   do {
-    candidate = `FolentraPDF_Campo_${fieldNumber}`;
+    candidate = `TenjinReader_Campo_${fieldNumber}`;
     fieldNumber += 1;
   } while (usedRootNames.has(candidate));
   usedRootNames.add(candidate);
