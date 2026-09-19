@@ -167,7 +167,7 @@ button:disabled {
   grid-row: 1;
   z-index: 20;
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(140px, 2fr) minmax(360px, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   min-width: 0;
   min-height: var(--topbar-height);
@@ -176,41 +176,10 @@ button:disabled {
   background: var(--surface);
 }
 
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-width: 0;
-}
-
-.brand-mark {
-  width: 29px;
-  height: 29px;
-  flex: 0 0 auto;
-}
-
-.brand-name {
-  font-size: 15px;
-  font-weight: 710;
-  letter-spacing: -0.02em;
-}
-
-.app-shell:not([data-document-type="none"]) .topbar {
-  grid-template-columns: minmax(180px, 1fr) auto;
-}
-
-.app-shell:not([data-document-type="none"]) .brand {
-  display: none;
-}
-
-.app-shell:not([data-document-type="none"]) .document-identity {
-  justify-content: flex-start;
-}
-
 .document-identity {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 7px;
   min-width: 0;
   color: var(--ink-soft);
@@ -1921,7 +1890,7 @@ kbd {
 
 @media (max-width: 1080px) {
   .topbar {
-    grid-template-columns: minmax(130px, 0.7fr) minmax(120px, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .button-quiet span {
@@ -1944,16 +1913,11 @@ kbd {
 
 @media (max-width: 840px) {
   .topbar {
-    grid-template-columns: auto minmax(90px, 1fr) auto;
-  }
-
-  .brand-name {
-    display: none;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .document-identity {
     justify-content: flex-start;
-    padding-left: 12px;
   }
 
   .welcome-screen {
@@ -2013,31 +1977,16 @@ kbd {
 
 @media (max-width: 520px) {
   .topbar {
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas:
-      "brand identity"
-      "actions actions";
-    row-gap: 5px;
-    padding-block: 6px;
-  }
-
-  .app-shell:not([data-document-type="none"]) .topbar {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "identity"
       "actions";
-  }
-
-  .brand {
-    grid-area: brand;
+    row-gap: 5px;
+    padding-block: 6px;
   }
 
   .document-identity {
     grid-area: identity;
-    padding-left: 8px;
-  }
-
-  .app-shell:not([data-document-type="none"]) .document-identity {
     padding-left: 0;
   }
 

@@ -64,6 +64,9 @@ predeterminado**. Windows abrirá su panel de aplicaciones predeterminadas para
 que confirmes TenjinReader para `.pdf` y, si quieres, `.ppt`, `.pptx`, `.odp` u
 `.odf`. El instalador registra todas esas opciones, pero nunca reemplaza tus
 asociaciones actuales sin confirmación.
+Cada formato registrado tiene su propio icono vertical en tonos naranja. El
+explorador muestra ese icono cuando TenjinReader queda asociado a la extensión;
+si Windows conserva otro lector predeterminado, conserva también su icono.
 
 También puedes descomprimir el paquete portátil y ejecutar
 `TenjinReader.exe`; esa versión no se instala.

@@ -33,6 +33,7 @@
     "os.getPath",
     "os.open",
     "window.setTitle",
+    "window.setIcon",
     "events.on"
   ],
   "globalVariables": {},
@@ -42,7 +43,7 @@
   },
   "modes": {
     "window": {
-      "title": "TenjinReader",
+      "title": " ",
       "icon": "/dist-web/icon.png",
       "width": 1180,
       "height": 760,

@@ -82,8 +82,6 @@ DEFAULT_OUTPUT_DIR="$(CDPATH= cd -- "$PROJECT_ROOT/../.." && pwd)/outputs"
 OUTPUT_DIR="${TENJINREADER_OUTPUT_DIR:-$DEFAULT_OUTPUT_DIR}"
 BINARY="${TENJINREADER_MACOS_BINARY:-$PROJECT_ROOT/dist/tenjinreader/tenjinreader-mac_universal}"
 ICON="${TENJINREADER_ICON_PNG:-$PROJECT_ROOT/public/icon.png}"
-PDF_ICON="$PROJECT_ROOT/installer/PdfDocument.png"
-PRESENTATION_ICON="$PROJECT_ROOT/installer/PptxDocument.png"
 BUNDLE_ID="${MACOS_BUNDLE_ID:-io.tenjinreader.app}"
 SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-0}"
 
@@ -113,10 +111,10 @@ BUILD_VERSION="${MACOS_BUNDLE_VERSION:-$VERSION}"
   || die "No existe el binario Neutralino universal de macOS: $BINARY"
 [[ -f "$ICON" ]] \
   || die "No existe el icono PNG: $ICON"
-[[ -f "$PDF_ICON" ]] \
-  || die "No existe el icono asociado de PDF: $PDF_ICON"
-[[ -f "$PRESENTATION_ICON" ]] \
-  || die "No existe el icono naranja asociado de presentaciones: $PRESENTATION_ICON"
+for document_name in PdfDocument PptDocument PptxDocument OdpDocument OdfDocument; do
+  [[ -f "$PROJECT_ROOT/installer/$document_name.png" ]] ||
+    die "No existe el icono asociado: $document_name.png"
+done
 
 MACHO_ARCHS="$(lipo -archs "$BINARY" 2>/dev/null)" \
   || die "El archivo indicado no es un binario Mach-O válido: $BINARY"
@@ -160,8 +158,6 @@ CONTENTS="$APP_BUNDLE/Contents"
 MACOS_DIR="$CONTENTS/MacOS"
 RESOURCES_DIR="$CONTENTS/Resources"
 APP_ICONSET="$WORK_DIR/TenjinReader.iconset"
-PDF_ICONSET="$WORK_DIR/PdfDocument.iconset"
-PRESENTATION_ICONSET="$WORK_DIR/PptxDocument.iconset"
 DMG_ROOT="$WORK_DIR/dmg-root"
 TEMP_DMG="$WORK_DIR/TenjinReader-${VERSION}-universal.dmg"
 APP_OUTPUT="$OUTPUT_DIR/TenjinReader.app"
@@ -169,8 +165,7 @@ DMG_OUTPUT="$OUTPUT_DIR/TenjinReader-${VERSION}-universal.dmg"
 DMG_NAME="$(basename -- "$DMG_OUTPUT")"
 
 mkdir -p \
-  "$MACOS_DIR" "$RESOURCES_DIR" "$APP_ICONSET" "$PDF_ICONSET" \
-  "$PRESENTATION_ICONSET" "$DMG_ROOT"
+  "$MACOS_DIR" "$RESOURCES_DIR" "$APP_ICONSET" "$DMG_ROOT"
 cp -- "$BINARY" "$MACOS_DIR/$APP_NAME"
 chmod 0755 "$MACOS_DIR/$APP_NAME"
 
@@ -201,8 +196,11 @@ make_iconset() {
 }
 
 make_iconset "$ICON" "$APP_ICONSET" TenjinReader.icns
-make_iconset "$PDF_ICON" "$PDF_ICONSET" PdfDocument.icns
-make_iconset "$PRESENTATION_ICON" "$PRESENTATION_ICONSET" PptxDocument.icns
+for document_name in PdfDocument PptDocument PptxDocument OdpDocument OdfDocument; do
+  iconset="$WORK_DIR/$document_name.iconset"
+  mkdir -p -- "$iconset"
+  make_iconset "$PROJECT_ROOT/installer/$document_name.png" "$iconset" "$document_name.icns"
+done
 
 cat >"$CONTENTS/Info.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -231,14 +229,23 @@ cat >"$CONTENTS/Info.plist" <<EOF
     </dict>
     <dict>
       <key>CFBundleTypeExtensions</key>
-      <array>
-        <string>ppt</string>
-        <string>pptx</string>
-        <string>odp</string>
-        <string>odf</string>
-      </array>
+      <array><string>ppt</string></array>
       <key>CFBundleTypeName</key>
-      <string>Presentación de solo lectura</string>
+      <string>Presentación PPT de solo lectura</string>
+      <key>CFBundleTypeIconFile</key>
+      <string>PptDocument.icns</string>
+      <key>CFBundleTypeRole</key>
+      <string>Viewer</string>
+      <key>LSHandlerRank</key>
+      <string>Alternate</string>
+      <key>LSItemContentTypes</key>
+      <array><string>com.microsoft.powerpoint.ppt</string></array>
+    </dict>
+    <dict>
+      <key>CFBundleTypeExtensions</key>
+      <array><string>pptx</string></array>
+      <key>CFBundleTypeName</key>
+      <string>Presentación PPTX de solo lectura</string>
       <key>CFBundleTypeIconFile</key>
       <string>PptxDocument.icns</string>
       <key>CFBundleTypeRole</key>
@@ -246,12 +253,35 @@ cat >"$CONTENTS/Info.plist" <<EOF
       <key>LSHandlerRank</key>
       <string>Alternate</string>
       <key>LSItemContentTypes</key>
-      <array>
-        <string>com.microsoft.powerpoint.ppt</string>
-        <string>org.openxmlformats.presentationml.presentation</string>
-        <string>org.oasis-open.opendocument.presentation</string>
-        <string>org.oasis-open.opendocument.formula</string>
-      </array>
+      <array><string>org.openxmlformats.presentationml.presentation</string></array>
+    </dict>
+    <dict>
+      <key>CFBundleTypeExtensions</key>
+      <array><string>odp</string></array>
+      <key>CFBundleTypeName</key>
+      <string>Presentación ODP de solo lectura</string>
+      <key>CFBundleTypeIconFile</key>
+      <string>OdpDocument.icns</string>
+      <key>CFBundleTypeRole</key>
+      <string>Viewer</string>
+      <key>LSHandlerRank</key>
+      <string>Alternate</string>
+      <key>LSItemContentTypes</key>
+      <array><string>org.oasis-open.opendocument.presentation</string></array>
+    </dict>
+    <dict>
+      <key>CFBundleTypeExtensions</key>
+      <array><string>odf</string></array>
+      <key>CFBundleTypeName</key>
+      <string>Fórmula ODF de solo lectura</string>
+      <key>CFBundleTypeIconFile</key>
+      <string>OdfDocument.icns</string>
+      <key>CFBundleTypeRole</key>
+      <string>Viewer</string>
+      <key>LSHandlerRank</key>
+      <string>Alternate</string>
+      <key>LSItemContentTypes</key>
+      <array><string>org.oasis-open.opendocument.formula</string></array>
     </dict>
   </array>
   <key>CFBundleExecutable</key>

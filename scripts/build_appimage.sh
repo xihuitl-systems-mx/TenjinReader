@@ -69,7 +69,10 @@ OUTPUT_DIR="${TENJINREADER_OUTPUT_DIR:-$DEFAULT_OUTPUT_DIR}"
 BINARY="${TENJINREADER_LINUX_BINARY:-$PROJECT_ROOT/dist/tenjinreader/tenjinreader-linux_x64}"
 ICON="${TENJINREADER_ICON_PNG:-$PROJECT_ROOT/public/icon.png}"
 PDF_ICON="$PROJECT_ROOT/installer/PdfDocument.png"
-PRESENTATION_ICON="$PROJECT_ROOT/installer/PptxDocument.png"
+PPT_ICON="$PROJECT_ROOT/installer/PptDocument.png"
+PPTX_ICON="$PROJECT_ROOT/installer/PptxDocument.png"
+ODP_ICON="$PROJECT_ROOT/installer/OdpDocument.png"
+ODF_ICON="$PROJECT_ROOT/installer/OdfDocument.png"
 SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-0}"
 
 [[ "$SOURCE_DATE_EPOCH" =~ ^[0-9]+$ ]] \
@@ -94,8 +97,9 @@ VERSION="$(
   || die "No existe el icono PNG: $ICON"
 [[ -f "$PDF_ICON" ]] \
   || die "No existe el icono asociado de PDF: $PDF_ICON"
-[[ -f "$PRESENTATION_ICON" ]] \
-  || die "No existe el icono naranja asociado de presentaciones: $PRESENTATION_ICON"
+for document_icon in "$PPT_ICON" "$PPTX_ICON" "$ODP_ICON" "$ODF_ICON"; do
+  [[ -f "$document_icon" ]] || die "No existe el icono asociado: $document_icon"
+done
 
 ELF_MAGIC="$(od -An -tx1 -N4 "$BINARY" | tr -d '[:space:]')"
 [[ "$ELF_MAGIC" == "7f454c46" ]] \
@@ -142,13 +146,13 @@ cp -- "$ICON" \
   "$APPDIR/usr/share/icons/hicolor/512x512/apps/$ICON_NAME"
 cp -- "$PDF_ICON" \
   "$APPDIR/usr/share/icons/hicolor/512x512/mimetypes/application-pdf.png"
-cp -- "$PRESENTATION_ICON" \
+cp -- "$PPT_ICON" \
   "$APPDIR/usr/share/icons/hicolor/512x512/mimetypes/application-vnd.ms-powerpoint.png"
-cp -- "$PRESENTATION_ICON" \
+cp -- "$PPTX_ICON" \
   "$APPDIR/usr/share/icons/hicolor/512x512/mimetypes/application-vnd.openxmlformats-officedocument.presentationml.presentation.png"
-cp -- "$PRESENTATION_ICON" \
+cp -- "$ODP_ICON" \
   "$APPDIR/usr/share/icons/hicolor/512x512/mimetypes/application-vnd.oasis.opendocument.presentation.png"
-cp -- "$PRESENTATION_ICON" \
+cp -- "$ODF_ICON" \
   "$APPDIR/usr/share/icons/hicolor/512x512/mimetypes/application-vnd.oasis.opendocument.formula.png"
 
 cat >"$APPDIR/AppRun" <<'EOF'

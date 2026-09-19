@@ -87,9 +87,18 @@ $icon = Resolve-RequiredFile (Join-Path $ProjectRoot "public\icon.png") "el icon
 $pdfIcon = Resolve-RequiredFile `
     (Join-Path $ProjectRoot "installer\PdfDocument.png") `
     "el icono asociado de PDF"
-$presentationIcon = Resolve-RequiredFile `
+$pptIcon = Resolve-RequiredFile `
+    (Join-Path $ProjectRoot "installer\PptDocument.png") `
+    "el icono asociado de PPT"
+$pptxIcon = Resolve-RequiredFile `
     (Join-Path $ProjectRoot "installer\PptxDocument.png") `
-    "el icono naranja asociado de presentaciones"
+    "el icono asociado de PPTX"
+$odpIcon = Resolve-RequiredFile `
+    (Join-Path $ProjectRoot "installer\OdpDocument.png") `
+    "el icono asociado de ODP"
+$odfIcon = Resolve-RequiredFile `
+    (Join-Path $ProjectRoot "installer\OdfDocument.png") `
+    "el icono asociado de ODF"
 
 $binaryMagic = [IO.File]::ReadAllBytes($binary)
 if (
@@ -144,13 +153,13 @@ Copy-Item -LiteralPath $icon -Destination (Join-Path $appDir ".DirIcon")
 Copy-Item -LiteralPath $icon -Destination (Join-Path $iconsDirectory $iconName)
 Copy-Item -LiteralPath $pdfIcon -Destination `
     (Join-Path $mimeIconsDirectory "application-pdf.png")
-Copy-Item -LiteralPath $presentationIcon -Destination `
+Copy-Item -LiteralPath $pptIcon -Destination `
     (Join-Path $mimeIconsDirectory "application-vnd.ms-powerpoint.png")
-Copy-Item -LiteralPath $presentationIcon -Destination `
+Copy-Item -LiteralPath $pptxIcon -Destination `
     (Join-Path $mimeIconsDirectory "application-vnd.openxmlformats-officedocument.presentationml.presentation.png")
-Copy-Item -LiteralPath $presentationIcon -Destination `
+Copy-Item -LiteralPath $odpIcon -Destination `
     (Join-Path $mimeIconsDirectory "application-vnd.oasis.opendocument.presentation.png")
-Copy-Item -LiteralPath $presentationIcon -Destination `
+Copy-Item -LiteralPath $odfIcon -Destination `
     (Join-Path $mimeIconsDirectory "application-vnd.oasis.opendocument.formula.png")
 
 $appRun = @'

@@ -63,6 +63,13 @@ export function initializeNative() {
       await events.on("windowClose", (event) => {
         void dispatchWindowClose(event);
       });
+      if (String(globalThis.window.NL_OS || "").toLowerCase().includes("win")) {
+        try {
+          await neutralinoWindow.setIcon("/dist-web/window-titlebar-transparent.png");
+        } catch {
+          // En versiones sin setIcon, el resto de la aplicación sigue funcionando.
+        }
+      }
       return true;
     })().catch((error) => {
       initializationError = error;
@@ -801,16 +808,17 @@ export async function openExternal(value) {
 }
 
 export async function setTitle(value = APP_TITLE) {
-  const title = String(value || APP_TITLE)
+  const title = String(value ?? APP_TITLE)
     .replace(/[\u0000-\u001f\u007f]/gu, " ")
     .trim()
-    .slice(0, 160) || APP_TITLE;
+    .slice(0, 160);
 
   if (isNeutralinoRuntime()) {
     await requireNative();
-    await neutralinoWindow.setTitle(title);
+    if (title) await neutralinoWindow.setTitle(title);
+    else await neutralinoWindow.setTitle();
   } else if (typeof document !== "undefined") {
-    document.title = title;
+    document.title = title || APP_TITLE;
   }
 
   return title;

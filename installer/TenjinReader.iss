@@ -64,7 +64,10 @@ Source: "..\LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\THIRD_PARTY_NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\licenses\*"; DestDir: "{app}\licenses"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "PdfDocument.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "PptDocument.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "PptxDocument.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "OdpDocument.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "OdfDocument.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
 ; Registra TenjinReader como opción compatible sin sustituir las preferencias
@@ -74,19 +77,31 @@ Root: HKA; Subkey: "Software\TenjinReader\Capabilities"; ValueType: string; Valu
 Root: HKA; Subkey: "Software\TenjinReader\Capabilities"; ValueType: string; ValueName: "ApplicationDescription"; ValueData: "Lector y editor PDF ligero con visor de presentaciones de solo lectura."
 Root: HKA; Subkey: "Software\TenjinReader\Capabilities"; ValueType: string; ValueName: "ApplicationIcon"; ValueData: """{app}\{#MyAppExeName}"",0"
 Root: HKA; Subkey: "Software\TenjinReader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".pdf"; ValueData: "TenjinReader.PDF"
-Root: HKA; Subkey: "Software\TenjinReader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".ppt"; ValueData: "TenjinReader.PPTX"
+Root: HKA; Subkey: "Software\TenjinReader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".ppt"; ValueData: "TenjinReader.PPT"
 Root: HKA; Subkey: "Software\TenjinReader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".pptx"; ValueData: "TenjinReader.PPTX"
-Root: HKA; Subkey: "Software\TenjinReader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".odp"; ValueData: "TenjinReader.PPTX"
-Root: HKA; Subkey: "Software\TenjinReader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".odf"; ValueData: "TenjinReader.PPTX"
+Root: HKA; Subkey: "Software\TenjinReader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".odp"; ValueData: "TenjinReader.ODP"
+Root: HKA; Subkey: "Software\TenjinReader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".odf"; ValueData: "TenjinReader.ODF"
 Root: HKA; Subkey: "Software\RegisteredApplications"; ValueType: string; ValueName: "{#MyAppName}"; ValueData: "Software\TenjinReader\Capabilities"; Flags: uninsdeletevalue
 
 Root: HKA; Subkey: "Software\Classes\TenjinReader.PDF"; ValueType: string; ValueData: "Documento PDF de TenjinReader"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\TenjinReader.PDF\DefaultIcon"; ValueType: string; ValueData: """{app}\PdfDocument.ico"",0"
 Root: HKA; Subkey: "Software\Classes\TenjinReader.PDF\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
+Root: HKA; Subkey: "Software\Classes\TenjinReader.PPT"; ValueType: string; ValueData: "Presentación PPT de TenjinReader"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\TenjinReader.PPT\DefaultIcon"; ValueType: string; ValueData: """{app}\PptDocument.ico"",0"
+Root: HKA; Subkey: "Software\Classes\TenjinReader.PPT\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+
 Root: HKA; Subkey: "Software\Classes\TenjinReader.PPTX"; ValueType: string; ValueData: "Presentación de TenjinReader"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\TenjinReader.PPTX\DefaultIcon"; ValueType: string; ValueData: """{app}\PptxDocument.ico"",0"
 Root: HKA; Subkey: "Software\Classes\TenjinReader.PPTX\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+
+Root: HKA; Subkey: "Software\Classes\TenjinReader.ODP"; ValueType: string; ValueData: "Presentación ODP de TenjinReader"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\TenjinReader.ODP\DefaultIcon"; ValueType: string; ValueData: """{app}\OdpDocument.ico"",0"
+Root: HKA; Subkey: "Software\Classes\TenjinReader.ODP\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+
+Root: HKA; Subkey: "Software\Classes\TenjinReader.ODF"; ValueType: string; ValueData: "Fórmula ODF de TenjinReader"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\TenjinReader.ODF\DefaultIcon"; ValueType: string; ValueData: """{app}\OdfDocument.ico"",0"
+Root: HKA; Subkey: "Software\Classes\TenjinReader.ODF\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}"; ValueType: string; ValueName: "FriendlyAppName"; ValueData: "{#MyAppName}"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".pdf"; ValueData: ""
@@ -97,10 +112,15 @@ Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes
 Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\shell\open\command"; ValueType: string; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 Root: HKA; Subkey: "Software\Classes\.pdf\OpenWithProgids"; ValueType: string; ValueName: "TenjinReader.PDF"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKA; Subkey: "Software\Classes\.ppt\OpenWithProgids"; ValueType: string; ValueName: "TenjinReader.PPTX"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKA; Subkey: "Software\Classes\.ppt\OpenWithProgids"; ValueType: string; ValueName: "TenjinReader.PPT"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
 Root: HKA; Subkey: "Software\Classes\.pptx\OpenWithProgids"; ValueType: string; ValueName: "TenjinReader.PPTX"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKA; Subkey: "Software\Classes\.odp\OpenWithProgids"; ValueType: string; ValueName: "TenjinReader.PPTX"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKA; Subkey: "Software\Classes\.odf\OpenWithProgids"; ValueType: string; ValueName: "TenjinReader.PPTX"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKA; Subkey: "Software\Classes\.odp\OpenWithProgids"; ValueType: string; ValueName: "TenjinReader.ODP"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKA; Subkey: "Software\Classes\.odf\OpenWithProgids"; ValueType: string; ValueName: "TenjinReader.ODF"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
+; El instalador anterior usaba PPTX para los otros formatos: retirar solo esas
+; entradas de descubrimiento, sin eliminar el ProgID de quien aún lo use.
+Root: HKA; Subkey: "Software\Classes\.ppt\OpenWithProgids"; ValueType: none; ValueName: "TenjinReader.PPTX"; Flags: deletevalue
+Root: HKA; Subkey: "Software\Classes\.odp\OpenWithProgids"; ValueType: none; ValueName: "TenjinReader.PPTX"; Flags: deletevalue
+Root: HKA; Subkey: "Software\Classes\.odf\OpenWithProgids"; ValueType: none; ValueName: "TenjinReader.PPTX"; Flags: deletevalue
 
 ; Alias de compatibilidad: conserva archivos que ya apuntaban a los ProgID de
 ; Pluma Reader mientras Windows migra la preferencia al nuevo nombre.

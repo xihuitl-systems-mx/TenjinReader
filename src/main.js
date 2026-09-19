@@ -529,7 +529,7 @@ function setDocumentIdentity() {
     ui.fileKind.hidden = true;
     ui.fileMeta.hidden = true;
     ui.dirty.hidden = true;
-    void setTitle("TenjinReader");
+    void setTitle("");
     return;
   }
 
@@ -551,7 +551,7 @@ function setDocumentIdentity() {
   ui.fileMeta.hidden = false;
   ui.dirty.hidden = !activeDocument.dirty;
   const prefix = activeDocument.dirty ? "• " : "";
-  void setTitle(`${prefix}${activeDocument.name} — TenjinReader`);
+  void setTitle(`${prefix}${activeDocument.name}`);
 }
 
 function setDirty(dirty) {
