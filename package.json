@@ -4,13 +4,13 @@
   "version": "1.6.1",
   "type": "module",
   "description": "Lector y editor PDF ligero con visor de presentaciones para Windows, Linux y macOS.",
-  "homepage": "https://github.com/Xihuitl-Systems/folentra-pdf#readme",
+  "homepage": "https://github.com/xihuitl-systems-mx/TenjinReader#readme",
   "bugs": {
-    "url": "https://github.com/Xihuitl-Systems/folentra-pdf/issues"
+    "url": "https://github.com/xihuitl-systems-mx/TenjinReader/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Xihuitl-Systems/folentra-pdf.git"
+    "url": "git+https://github.com/xihuitl-systems-mx/TenjinReader.git"
   },
   "scripts": {
     "build:icons": "node scripts/make_installer_icon.mjs",
