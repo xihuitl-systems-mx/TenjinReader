@@ -36,6 +36,7 @@ import {
 } from "./pdf-source.js";
 import {
   baseName,
+  calculateZoomMultiplier,
   canScrollVertically,
   formatFileSize,
   getDocumentType,
@@ -2311,10 +2312,75 @@ async function goToEnteredPage() {
   else if (activeUsesPptxController()) await pptx?.goTo(value - 1);
 }
 
-async function changeZoom(multiplier) {
+async function changeZoom(multiplier, anchor = null) {
   if (!activeDocument) return;
-  if (activeUsesPdfController()) await pdf.setZoom(pdf.scale * multiplier);
-  else if (activeUsesPptxController() && pptx) await pptx.setZoom(pptx.zoom * multiplier);
+
+  const viewer = ui.viewer;
+  const viewerRect = viewer?.getBoundingClientRect?.();
+  const prevScrollLeft = viewer?.scrollLeft || 0;
+  const prevScrollTop = viewer?.scrollTop || 0;
+
+  const hasAnchor = Boolean(
+    viewerRect
+    && anchor
+    && Number.isFinite(anchor.x)
+    && Number.isFinite(anchor.y)
+    && anchor.x >= viewerRect.left
+    && anchor.x <= viewerRect.right
+    && anchor.y >= viewerRect.top
+    && anchor.y <= viewerRect.bottom,
+  );
+
+  const offsetX = hasAnchor
+    ? anchor.x - viewerRect.left
+    : (viewerRect?.width || 0) / 2;
+  const offsetY = hasAnchor
+    ? anchor.y - viewerRect.top
+    : (viewerRect?.height || 0) / 2;
+
+  let actualMultiplier = 1;
+
+  if (activeUsesPdfController()) {
+    const currentScale = pdf.scale || 1;
+    const targetScale = Math.min(4, Math.max(0.25, currentScale * multiplier));
+    actualMultiplier = targetScale / currentScale;
+    await pdf.setZoom(targetScale);
+  } else if (activeUsesPptxController() && pptx) {
+    const currentZoom = pptx.zoom || 1;
+    const targetZoom = Math.min(3, Math.max(0.35, currentZoom * multiplier));
+    actualMultiplier = targetZoom / currentZoom;
+    await pptx.setZoom(targetZoom);
+  }
+
+  if (viewer && actualMultiplier !== 1) {
+    viewer.scrollLeft = Math.max(0, (prevScrollLeft + offsetX) * actualMultiplier - offsetX);
+    viewer.scrollTop = Math.max(0, (prevScrollTop + offsetY) * actualMultiplier - offsetY);
+  }
+}
+
+function handleZoomWheel(event) {
+  if (!event.ctrlKey && !event.metaKey) return;
+  event.preventDefault();
+  clearWheelGesture();
+
+  if (
+    !activeDocument ||
+    (!activeUsesPdfController() && !activeUsesPptxController()) ||
+    busy ||
+    pdf.pointerSession
+  ) {
+    return;
+  }
+
+  const multiplier = calculateZoomMultiplier(
+    event.deltaY,
+    event.deltaMode,
+    ui.viewer.clientHeight,
+  );
+  if (multiplier === 1) return;
+
+  const anchor = { x: event.clientX, y: event.clientY };
+  void runDocumentAction(() => changeZoom(multiplier, anchor));
 }
 
 async function fitDocument() {
@@ -2468,6 +2534,10 @@ function bindInterface() {
   ui.viewer.addEventListener("wheel", handleViewerWheel, {
     passive: false,
   });
+  window.addEventListener("wheel", handleZoomWheel, {
+    passive: false,
+    capture: true,
+  });
   ui.pageInput.addEventListener("change", () => runDocumentAction(goToEnteredPage));
   ui.pageInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
@@ -2533,6 +2603,21 @@ function bindInterface() {
     ) {
       event.preventDefault();
       runDocumentAction(() => pdf.undo());
+      return;
+    }
+    if (modifier && (event.key === "+" || event.key === "=" || event.key === "Add")) {
+      event.preventDefault();
+      if (activeDocument) runDocumentAction(() => changeZoom(1.15));
+      return;
+    }
+    if (modifier && (event.key === "-" || event.key === "Subtract")) {
+      event.preventDefault();
+      if (activeDocument) runDocumentAction(() => changeZoom(1 / 1.15));
+      return;
+    }
+    if (modifier && event.key === "0") {
+      event.preventDefault();
+      if (activeDocument) runDocumentAction(fitDocument);
       return;
     }
     if (typing || modifier || event.altKey || !activeDocument) return;

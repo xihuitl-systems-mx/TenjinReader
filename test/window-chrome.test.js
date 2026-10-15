@@ -40,3 +40,15 @@ test("the Windows title-bar icon is a fully transparent PNG", async () => {
     assert.equal(pixels[index], 0);
   }
 });
+
+test("window wheel captures Ctrl-scroll to zoom open files and prevent browser window zoom", async () => {
+  const mainSource = await readFile(path.join(projectDirectory, "src", "main.js"), "utf8");
+  assert.match(
+    mainSource,
+    /window\.addEventListener\("wheel",\s*handleZoomWheel,\s*\{[\s\S]*?passive:\s*false,[\s\S]*?capture:\s*true/u,
+  );
+  assert.match(mainSource, /if\s*\(!event\.ctrlKey\s*&&\s*!event\.metaKey\)\s*return;/u);
+  assert.match(mainSource, /event\.preventDefault\(\);/u);
+  assert.match(mainSource, /calculateZoomMultiplier/u);
+});
+

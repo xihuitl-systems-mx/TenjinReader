@@ -100,6 +100,23 @@ export function wheelDeltaToPixels(
 }
 
 /**
+ * Calculates an exponential zoom multiplier from a WheelEvent.
+ * Standardizes notched mouse wheels (~1.15x per notch) and smooth trackpad pinches.
+ */
+export function calculateZoomMultiplier(
+  deltaY,
+  deltaMode = 0,
+  viewportHeight = 0,
+) {
+  const delta = wheelDeltaToPixels(deltaY, deltaMode, viewportHeight);
+  if (delta === 0) {
+    return 1;
+  }
+  const factor = Math.exp(-delta * 0.0014);
+  return Math.max(0.65, Math.min(1.5, factor));
+}
+
+/**
  * Reports whether a scrollport still has room in the requested direction.
  */
 export function canScrollVertically(

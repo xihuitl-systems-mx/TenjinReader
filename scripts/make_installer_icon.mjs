@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createCanvas } from "@napi-rs/canvas";
+import { createCanvas, loadImage } from "@napi-rs/canvas";
 import png2icons from "png2icons";
 
 const projectDirectory = path.resolve(
@@ -238,7 +238,12 @@ for (const definition of documents) {
   console.log(`${pngPath} → ${icoPath}`);
 }
 
-const appIcon = await readFile(path.join(projectDirectory, "public", "icon.png"));
+const appSvg = await loadImage(path.join(projectDirectory, "public", "icon.svg"));
+const appCanvas = createCanvas(size, size);
+const appCtx = appCanvas.getContext("2d");
+appCtx.drawImage(appSvg, 0, 0, size, size);
+const appIcon = appCanvas.toBuffer("image/png");
+await writeFile(path.join(projectDirectory, "public", "icon.png"), appIcon);
 await saveIcon(appIcon, path.join(installerDirectory, "TenjinReader.ico"));
 
 // Neutralino necesita una imagen válida para ocultar el pequeño icono del

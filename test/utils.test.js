@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   baseName,
+  calculateZoomMultiplier,
   canScrollVertically,
   clamp,
   formatFileSize,
@@ -64,6 +65,24 @@ test("normalizes wheel deltas from pixels, lines, and pages", () => {
   assert.equal(wheelDeltaToPixels(-1, 2, 600), -600);
   assert.equal(wheelDeltaToPixels(1, 2, 0), 1);
   assert.equal(wheelDeltaToPixels(Number.NaN, 0, 600), 0);
+});
+
+test("calculates zoom multiplier from wheel delta for mice and trackpads", () => {
+  assert.equal(calculateZoomMultiplier(0), 1);
+  // Standard mouse notch up (~ -100px) gives ~1.15x
+  const zoomIn = calculateZoomMultiplier(-100, 0, 600);
+  assert.ok(zoomIn > 1.14 && zoomIn < 1.16, `expected ~1.15, got ${zoomIn}`);
+  // Standard mouse notch down (~ +100px) gives ~0.87x (1 / 1.15)
+  const zoomOut = calculateZoomMultiplier(100, 0, 600);
+  assert.ok(zoomOut > 0.86 && zoomOut < 0.88, `expected ~0.87, got ${zoomOut}`);
+  // Symmetric inverse
+  assert.ok(Math.abs(zoomIn * zoomOut - 1) < 0.001);
+  // Line deltaMode (-3 lines)
+  const lineZoomIn = calculateZoomMultiplier(-3, 1, 600);
+  assert.ok(lineZoomIn > 1.05 && lineZoomIn < 1.10);
+  // Clamped bounds
+  assert.equal(calculateZoomMultiplier(-10000), 1.5);
+  assert.equal(calculateZoomMultiplier(10000), 0.65);
 });
 
 test("detects remaining vertical scroll room in either direction", () => {

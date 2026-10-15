@@ -139,3 +139,36 @@ test("the five file extensions have independent Windows icon associations", asyn
     );
   }
 });
+
+test("application icon and TenjinReader.ico have alpha-safe transparent corners", async () => {
+  const iconPng = await readFile(path.join(projectDirectory, "public", "icon.png"));
+  const appImage = decodePng(iconPng);
+  assert.equal(appImage.width, 1024);
+  assert.equal(appImage.height, 1024);
+  for (const [x, y] of [[0, 0], [1023, 0], [0, 1023], [1023, 1023]]) {
+    assert.equal(pixelAt(appImage, x, y)[3], 0, `icon.png corner (${x}, ${y}) must be transparent`);
+  }
+
+  const ico = await readFile(path.join(projectDirectory, "installer", "TenjinReader.ico"));
+  assert.equal(ico.readUInt16LE(4), expectedSizes.length, "TenjinReader.ico frame count");
+  for (const [index, expectedSize] of expectedSizes.entries()) {
+    const entry = 6 + index * 16;
+    const length = ico.readUInt32LE(entry + 8);
+    const offset = ico.readUInt32LE(entry + 12);
+    const frame = decodePng(ico.subarray(offset, offset + length));
+    assert.equal(frame.width, expectedSize);
+    assert.equal(frame.height, expectedSize);
+    for (const [x, y] of [
+      [0, 0],
+      [expectedSize - 1, 0],
+      [0, expectedSize - 1],
+      [expectedSize - 1, expectedSize - 1],
+    ]) {
+      assert.equal(
+        pixelAt(frame, x, y)[3],
+        0,
+        `TenjinReader.ico ${expectedSize}px corner (${x}, ${y}) must be transparent`,
+      );
+    }
+  }
+});
